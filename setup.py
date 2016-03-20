@@ -14,7 +14,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'pymongo'
+        'pymongo==3.2.1'
     ],
     entry_points={
         'console_scripts': ['mongodb-migrate=mongodb_migrations.cli:main'],

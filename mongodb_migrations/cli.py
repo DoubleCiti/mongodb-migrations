@@ -6,6 +6,12 @@ from datetime import datetime
 
 import pymongo
 
+# TODO:
+# split command to create and upgrade
+# create:
+#     create a file in custom folder
+# upgrade:
+#     run migration files from custom folder
 parser = argparse.ArgumentParser(description="Mongodb migration parser")
 parser.add_argument('--host', metavar='H', default='127.0.0.1',
                     help="host of MongoDB")
@@ -52,10 +58,14 @@ def main():
     last_migration = None
     if database_migration_names:
         last_migration = database_migration_names[0]
+        print "Found previous migrations, last migration is version: %s" % last_migration
+    else:
+        print "No previous migrations found"
 
     sys.path.insert(0, args.migrations)
     for migration_name in migration_names:
         if not last_migration or migration_name > last_migration:
+            print "Trying to migrate version: %s" % migration_name
             try:
                 module = __import__(migration_name)
                 migration_object = module.Migration(host=args.host,
@@ -63,6 +73,8 @@ def main():
                                                     database=args.database)
                 migration_object.upgrade()
             except Exception as e:
+                print "Failed to migrate version: %s" % migration_name
                 print "%s" % e.message
                 sys.exit(1)
+            print "Succeed to migrate version: %s" % migration_name
             create_migration(db, migration_name)
