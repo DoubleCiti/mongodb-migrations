@@ -27,6 +27,12 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 
 ## Example
 
+Migration files are located in `examples`, run following command to run migrations:
+
+```
+$ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
+```
+
 ## Getting involved
 
 * if you find any bug or need anything, please log an issue here: [Issues](https://github.com/DoubleCiti/mongodb-migrations/issues)
