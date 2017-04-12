@@ -66,7 +66,7 @@ def main():
     sys.path.insert(0, args.migrations)
     for migration_name in migration_names:
         if not last_migration or migration_name > last_migration:
-            print "Trying to migrate version: %s" % migration_name
+            print("Trying to migrate version: %s" % migration_name)
             try:
                 module = __import__(migration_name)
                 migration_object = module.Migration(host=args.host,
@@ -77,5 +77,5 @@ def main():
                 print("Failed to migrate version: %s" % migration_name)
                 print("%s" % e.message)
                 sys.exit(1)
-            print "Succeed to migrate version: %s" % migration_name
+            print("Succeed to migrate version: %s" % migration_name)
             create_migration(db, migration_name)
