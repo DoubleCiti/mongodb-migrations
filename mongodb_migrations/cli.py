@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import os
 import sys
@@ -53,19 +54,19 @@ def main():
     database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
     migration_names = ['%s' % migration.split('.')[0] for migration in migrations]
     if set(database_migration_names) - set(migration_names):
-        print "migrations doesn't match"
+        print("migrations doesn't match")
         sys.exit(1)
     last_migration = None
     if database_migration_names:
         last_migration = database_migration_names[0]
-        print "Found previous migrations, last migration is version: %s" % last_migration
+        print("Found previous migrations, last migration is version: %s" % last_migration)
     else:
-        print "No previous migrations found"
+        print("No previous migrations found")
 
     sys.path.insert(0, args.migrations)
     for migration_name in migration_names:
         if not last_migration or migration_name > last_migration:
-            print "Trying to migrate version: %s" % migration_name
+            print("Trying to migrate version: %s" % migration_name)
             try:
                 module = __import__(migration_name)
                 migration_object = module.Migration(host=args.host,
@@ -73,8 +74,8 @@ def main():
                                                     database=args.database)
                 migration_object.upgrade()
             except Exception as e:
-                print "Failed to migrate version: %s" % migration_name
-                print "%s" % e.message
+                print("Failed to migrate version: %s" % migration_name)
+                print("%s" % e.message)
                 sys.exit(1)
-            print "Succeed to migrate version: %s" % migration_name
+            print("Succeed to migrate version: %s" % migration_name)
             create_migration(db, migration_name)
