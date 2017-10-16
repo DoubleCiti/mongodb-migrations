@@ -1,5 +1,5 @@
 from __future__ import print_function
-import argparse
+from config_parser import Configuration
 import os
 import sys
 import re
@@ -13,69 +13,65 @@ import pymongo
 #     create a file in custom folder
 # upgrade:
 #     run migration files from custom folder
-parser = argparse.ArgumentParser(description="Mongodb migration parser")
-parser.add_argument('--host', metavar='H', default='127.0.0.1',
-                    help="host of MongoDB")
-parser.add_argument('--port', type=int, metavar='p', default=27017,
-                    help="port of MongoDB")
-parser.add_argument('--database', metavar='d',
-                    help="database of MongoDB")
-parser.add_argument('--migrations', default='migrations',
-                    help="directory of migration files")
+class MigrationManager(object):
+    config = None
+    db = None
 
+    def run(self):
+        self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database)
+        files = os.listdir(self.config.mongo_migrations_path)
+        migrations = []
+        for f in files:
+            result = re.match('^\d+\.py$', f)
+            if result:
+                migrations.append(f)
 
-def get_migration_names(db):
-    return db.database_migrations.find().sort('migration_datetime', pymongo.DESCENDING)
+        database_migrations = self._get_migration_names()
+        database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
+        migration_names = ['%s' % migration.split('.')[0] for migration in migrations]
+        if set(database_migration_names) - set(migration_names):
+            print("migrations doesn't match")
+            sys.exit(1)
+        last_migration = None
+        if database_migration_names:
+            last_migration = database_migration_names[0]
+            print("Found previous migrations, last migration is version: %s" % last_migration)
+        else:
+            print("No previous migrations found")
 
+        sys.path.insert(0, self.config.mongo_migrations_path)
+        for migration_name in migration_names:
+            if not last_migration or migration_name > last_migration:
+                print("Trying to migrate version: %s" % migration_name)
+                try:
+                    module = __import__(migration_name)
+                    migration_object = module.Migration(host=self.config.mongo_host,
+                                                        port=self.config.mongo_port,
+                                                        database=self.config.mongo_database)
+                    migration_object.upgrade()
+                except Exception as e:
+                    print("Failed to migrate version: %s" % migration_name)
+                    print("%s" % e.message)
+                    sys.exit(1)
+                print("Succeed to migrate version: %s" % migration_name)
+                self._create_migration(migration_name)
 
-def get_mongo_database(host, port, database):
-    client = pymongo.MongoClient(host=host, port=port)
-    return client[database]
+    def _get_migration_names(self):
+        return self.db.database_migrations.find().sort('migration_datetime', pymongo.DESCENDING)
 
+    def _create_migration(self, migration):
+        self.db.database_migrations.save({'migration_datetime': migration,
+                                     'created_at': datetime.now()})
 
-def create_migration(db, migration):
-    db.database_migrations.save({'migration_datetime': migration,
-                                 'created_at': datetime.now()})
+    def _get_mongo_database(self, host, port, database):
+        client = pymongo.MongoClient(host=host, port=port)
+        return client[database]
 
 
 def main():
-    args = parser.parse_args()
-
-    files = os.listdir(args.migrations)
-    migrations = []
-    for f in files:
-        result = re.match('^\d+\.py$', f)
-        if result:
-            migrations.append(f)
-
-    db = get_mongo_database(args.host, args.port, args.database)
-
-    database_migrations = get_migration_names(db)
-    database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
-    migration_names = ['%s' % migration.split('.')[0] for migration in migrations]
-    if set(database_migration_names) - set(migration_names):
-        print("migrations doesn't match")
-        sys.exit(1)
-    last_migration = None
-    if database_migration_names:
-        last_migration = database_migration_names[0]
-        print("Found previous migrations, last migration is version: %s" % last_migration)
-    else:
-        print("No previous migrations found")
-
-    sys.path.insert(0, args.migrations)
-    for migration_name in migration_names:
-        if not last_migration or migration_name > last_migration:
-            print("Trying to migrate version: %s" % migration_name)
-            try:
-                module = __import__(migration_name)
-                migration_object = module.Migration(host=args.host,
-                                                    port=args.port,
-                                                    database=args.database)
-                migration_object.upgrade()
-            except Exception as e:
-                print("Failed to migrate version: %s" % migration_name)
-                print("%s" % e.message)
-                sys.exit(1)
-            print("Succeed to migrate version: %s" % migration_name)
-            create_migration(db, migration_name)
+    manager = MigrationManager()
+    manager.config = Configuration()
+    manager.config.from_console()
+    if manager.config.migrator_config != None:
+        manager.config.from_ini()
+    manager.run()
