@@ -7,7 +7,7 @@ setup(
     long_description=__doc__,
     url='https://github.com/DoubleCiti/mongodb-migrations',
     author='David Xie',
-    author_email='david.xie@me.com',
+    author_email='david30xie@gmail.com',
     license='GPLv3',
     packages=find_packages(),
     platforms='any',
