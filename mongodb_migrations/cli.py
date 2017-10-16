@@ -17,6 +17,15 @@ class MigrationManager(object):
     config = None
     db = None
 
+    def __init__(self):
+        self.create_config()
+
+    def create_config(self):
+        self.config = Configuration()
+        self.config.from_console()
+        if self.config.migrator_config != None:
+            self.config.from_ini()
+
     def run(self):
         self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database)
         files = os.listdir(self.config.mongo_migrations_path)
@@ -70,8 +79,4 @@ class MigrationManager(object):
 
 def main():
     manager = MigrationManager()
-    manager.config = Configuration()
-    manager.config.from_console()
-    if manager.config.migrator_config != None:
-        manager.config.from_ini()
     manager.run()
