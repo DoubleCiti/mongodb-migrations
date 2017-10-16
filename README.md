@@ -25,12 +25,27 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 4. implement `upgrade` method
 5. use cli `mongodb-migrate` to run migrations
 
+If you don't wish to use the CLI, you can override the MigrationManager -> create_config and then call MigrationManager -> run. Example execution:
+
+```python
+    manager = MigrationManager()
+    manager.config.migrator_config = "foobar.ini"
+    manager.config.from_ini()
+    manager.run()
+```
+
 ## Example
 
 Migration files are located in `examples`, run following command to run migrations:
 
 ```
 $ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
+```
+
+You can pass on the config file that you want to use by:
+
+```
+$ mongodb-migrate --config mig.ini
 ```
 
 ## Getting involved
