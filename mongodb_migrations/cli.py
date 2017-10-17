@@ -22,9 +22,11 @@ class MigrationManager(object):
 
     def create_config(self):
         self.config = Configuration()
-        self.config.from_console()
         if self.config.migrator_config != None:
             self.config.from_ini()
+        else:
+            self.config.from_console()
+
 
     def run(self):
         self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database)
