@@ -3,9 +3,9 @@ import os
 from configparser import ConfigParser
 
 class Configuration(object):
-  migrator_config = None
+  migrator_config = os.getenv('MONGODB_MIGRATIONS_CONFIG', None)
   mongo_host = '127.0.0.1'
-  mongo_port = 27017
+  mongo_port = '27017'
   mongo_database = None
   mongo_migrations_path = 'migrations'
 
@@ -16,7 +16,7 @@ class Configuration(object):
     parser.add_argument('--port', type=int, metavar='p', default=self.mongo_port,
                     help="port of MongoDB")
     parser.add_argument('--database', metavar='d',
-                    help="database of MongoDB")
+                    help="database of MongoDB", required=True, default=self.mongo_database)
     parser.add_argument('--migrations', default=self.mongo_migrations_path,
                     help="directory of migration files")
     args = parser.parse_args()
@@ -28,7 +28,7 @@ class Configuration(object):
 
   def from_ini(self):
 
-    parser = ConfigParser()
+    parser = ConfigParser(defaults={'host': self.mongo_host, 'port': self.mongo_port, 'migrations': self.mongo_migrations_path})
 
     parser.read(self.migrator_config)
     if not parser.sections():

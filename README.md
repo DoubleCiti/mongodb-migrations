@@ -45,7 +45,7 @@ $ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations exa
 You can pass on the config file that you want to use by:
 
 ```
-$ mongodb-migrate --config mig.ini
+$ MONGODB_MIGRATIONS_CONFIG=mig.ini mongodb-migrate
 ```
 
 ## Getting involved
