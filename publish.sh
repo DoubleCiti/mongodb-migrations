@@ -1,9 +1,9 @@
 #!/bin/sh
 
-which twine || echo "twine is needed, use pip install twine to install it" && exit 1
+which twine > /dev/null 2>&1 || (echo "twine is needed, use pip install twine to install it" && exit 1)
 
-python setup.py sdist
+rm -rf dist/ build/
 
-python setup.py bdist_wheel
-
+python setup.py sdist && \
+python setup.py bdist_wheel && \
 twine upload dist/*

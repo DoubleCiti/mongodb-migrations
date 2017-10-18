@@ -51,3 +51,7 @@ $ MONGODB_MIGRATIONS_CONFIG=mig.ini mongodb-migrate
 ## Getting involved
 
 * if you find any bug or need anything, please log an issue here: [Issues](https://github.com/DoubleCiti/mongodb-migrations/issues)
+
+## Contributors
+
+* [Rohit Garg](https://github.com/rohitggarg)
