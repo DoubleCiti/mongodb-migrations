@@ -14,6 +14,9 @@ class Configuration(object):
         self._from_ini()
         self._from_console()
 
+        if not self.mongo_database:
+            raise Exception("No database name is provided")
+
     def _from_console(self):
         parser = argparse.ArgumentParser(description="Mongodb migration parser")
 
@@ -37,16 +40,16 @@ class Configuration(object):
         parser = ConfigParser(defaults={'host': self.mongo_host, 'port': self.mongo_port, 'migrations': self.mongo_migrations_path, 'database': self.mongo_database})
 
         try:
-            fp = open(config_file)
-        except PermissionError:
+            fp = open(self.config_file)
+        except Exception:
             pass
         else:
             with fp:
                 parser.readfp(fp)
-        if not parser.sections():
-            raise Exception("Cannot find %s or it doesn't have sections." % config_file)
+                if not parser.sections():
+                    raise Exception("Cannot find %s or it doesn't have sections." % self.config_file)
 
-        self.mongo_host = parser.get('mongo', 'host')
-        self.mongo_port = parser.getint('mongo', 'port')
-        self.mongo_database = parser.get('mongo', 'database')
-        self.mongo_migrations_path = parser.get('mongo', 'migrations')
+                self.mongo_host = parser.get('mongo', 'host')
+                self.mongo_port = parser.getint('mongo', 'port')
+                self.mongo_database = parser.get('mongo', 'database')
+                self.mongo_migrations_path = parser.get('mongo', 'migrations')
