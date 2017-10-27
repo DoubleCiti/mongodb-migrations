@@ -21,7 +21,7 @@ setup(
         'console_scripts': ['mongodb-migrate=mongodb_migrations.cli:main'],
     },
     classifiers=[
-        'Development Status :: 3.6',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
