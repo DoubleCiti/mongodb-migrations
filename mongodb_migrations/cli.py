@@ -1,5 +1,5 @@
 from __future__ import print_function
-from .config_parser import Configuration
+from .config import Configuration
 import os
 import sys
 import re

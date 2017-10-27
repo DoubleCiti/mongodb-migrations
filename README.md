@@ -20,8 +20,8 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 ## How to use it
 
 1. create a fold named `migrations`
-2. create a python file with name like `20160320145400.py`
-3. in `20160320145400.py` create a class named `Migration` and extends `BaseMigration`
+2. create a python file with name like `20160320145400_description.py`
+3. in `20160320145400_description.py` create a class named `Migration` and extends `BaseMigration`
 4. implement `upgrade` method
 5. use cli `mongodb-migrate` to run migrations
 
@@ -34,18 +34,34 @@ If you don't wish to use the CLI, you can override the MigrationManager -> creat
     manager.run()
 ```
 
+## Configuration
+
+`mongodb-migrations` will try to load `config.ini` first, if it's not found, default values will be used. If any command line argument is provided, it will override config from configuration file.
+
+**Only database name is mandatory**
+
+### config.ini example
+
+```ini
+[mongo]
+host = 127.0.0.1
+port = 27017
+database = test
+migrations = migrations
+```
+
+### command line arguments example
+
+```bash
+mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
+```
+
 ## Example
 
 Migration files are located in `examples`, run following command to run migrations:
 
 ```
 $ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
-```
-
-You can pass on the config file that you want to use by:
-
-```
-$ MONGODB_MIGRATIONS_CONFIG=mig.ini mongodb-migrate
 ```
 
 ## Getting involved
