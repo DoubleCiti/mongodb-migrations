@@ -67,7 +67,7 @@ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examp
 Migration files are located in `examples`, run following command to run migrations:
 
 ```
-$ MONGODB_MIGRATIONS_CONFIG=config.ini mongodb-migrate --migrations examples
+$ MONGODB_MIGRATIONS_CONFIG=examples/config.ini mongodb-migrate --migrations examples
 ```
 
 ## Getting involved

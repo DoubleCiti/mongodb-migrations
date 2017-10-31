@@ -4,7 +4,7 @@ from configparser import ConfigParser
 
 
 class Configuration(object):
-    config_file = 'config.ini'
+    config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
     mongo_host = '127.0.0.1'
     mongo_port = '27017'
     mongo_database = None
