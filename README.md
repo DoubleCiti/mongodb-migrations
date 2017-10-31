@@ -30,8 +30,14 @@ If you don't wish to use the CLI, you can override the MigrationManager -> creat
 ```python
     manager = MigrationManager()
     manager.config.migrator_config = "foobar.ini"
-    manager.config.from_ini()
+    manager.config._from_ini()
     manager.run()
+```
+
+You can also use the same config to keep multiple keys, the manager allows you access by using:
+```python
+   ini_config_parser = manager.config.ini_parser
+   ini_config_parser.get('foo','bar')
 ```
 
 ## Configuration
@@ -61,7 +67,7 @@ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examp
 Migration files are located in `examples`, run following command to run migrations:
 
 ```
-$ mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
+$ MONGODB_MIGRATIONS_CONFIG=config.ini mongodb-migrate --migrations examples
 ```
 
 ## Getting involved
