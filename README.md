@@ -70,6 +70,8 @@ Migration files are located in `examples`, run following command to run migratio
 $ MONGODB_MIGRATIONS_CONFIG=examples/config.ini mongodb-migrate
 ```
 
+For Downgrading the migrations, you need to pass a command line switch `--downgrade`
+
 ## Getting involved
 
 * if you find any bug or need anything, please log an issue here: [Issues](https://github.com/DoubleCiti/mongodb-migrations/issues)
