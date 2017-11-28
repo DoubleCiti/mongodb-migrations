@@ -3,6 +3,7 @@ from .config import Configuration
 import os
 import sys
 import re
+import logging
 from datetime import datetime
 
 import pymongo
@@ -14,6 +15,7 @@ import pymongo
 # upgrade:
 #     run migration files from custom folder
 class MigrationManager(object):
+    logger = logging.getLogger("cli")
     config = None
     db = None
     migrations = {}
@@ -33,12 +35,12 @@ class MigrationManager(object):
         database_migrations = self._get_migration_names()
         self.database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
         if set(self.database_migration_names) - set(self.migrations.keys()):
-            print("migrations doesn't match")
+            self.logger.error("migrations doesn't match")
             sys.exit(1)
         if self.database_migration_names:
-            print("Found previous migrations, last migration is version: %s" % self.database_migration_names[0])
+            self.logger.info("Found previous migrations, last migration is version: %s" % self.database_migration_names[0])
         else:
-            print("No previous migrations found")
+            self.logger.info("No previous migrations found")
 
         sys.path.insert(0, self.config.mongo_migrations_path)
         self._domigrate()
@@ -46,7 +48,7 @@ class MigrationManager(object):
     def _domigrate(self):
         for migration_datetime in sorted(self.migrations.keys()):
             if not self.database_migration_names or migration_datetime > self.database_migration_names[0]:
-                print("Trying to migrate version: %s" % self.migrations[migration_datetime])
+                self.logger.info("Trying to migrate version: %s" % self.migrations[migration_datetime])
                 try:
                     module = __import__(self.migrations[migration_datetime])
                     migration_object = module.Migration(host=self.config.mongo_host,
@@ -54,10 +56,10 @@ class MigrationManager(object):
                                                         database=self.config.mongo_database)
                     migration_object.upgrade()
                 except Exception as e:
-                    print("Failed to migrate version: %s" % self.migrations[migration_datetime])
+                    self.logger.error("Failed to migrate version: %s" % self.migrations[migration_datetime])
                     print("%s" % e.message)
                     sys.exit(1)
-                print("Succeed to migrate version: %s" % self.migrations[migration_datetime])
+                self.logger.info("Succeed to migrate version: %s" % self.migrations[migration_datetime])
                 self._create_migration(migration_datetime)
 
     def _get_migration_names(self):
