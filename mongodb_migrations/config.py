@@ -8,6 +8,10 @@ class Execution(Enum):
     DOWNGRADE = 'execution_downgrade'
     MIGRATE = 'execution_migrate'
 
+class LabelType(Enum):
+    HASH = 'hash'
+    TIMESTAMP = 'timestamp'
+
 
 class Configuration(object):
     config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
@@ -16,6 +20,7 @@ class Configuration(object):
     mongo_database = None
     mongo_migrations_path = 'migrations'
     execution = Execution.MIGRATE
+    label_type = LabelType.TIMESTAMP
 
     def __init__(self):
         self._from_ini()
@@ -44,6 +49,9 @@ class Configuration(object):
         self.arg_parser.add_argument(
             '--downgrade', action='store_true', default=False,
             help='Downgrade instead of upgrade')
+        self.arg_parser.add_argument(
+            '--labeltype', action='labeltype', default=LabelType.TIMESTAMP,
+            help='Set the label type used by migration files')
 
         args = self.arg_parser.parse_args()
 
@@ -53,6 +61,7 @@ class Configuration(object):
         self.mongo_migrations_path = args.migrations
         if args.downgrade == True:
             self.execution = Execution.DOWNGRADE
+        self.label_type = args.labeltype
 
     def _from_ini(self):
         self.ini_parser = ConfigParser(
