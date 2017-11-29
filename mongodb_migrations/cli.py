@@ -47,12 +47,12 @@ class MigrationManager(object):
             print("No previous migrations found")
 
         sys.path.insert(0, self.config.mongo_migrations_path)
-        {
-            Execution.UPGRADE: self._domigrate,
-            Execution.DOWNGRADE: self._dorollback
-        }[self.config.execution]()
+        if self.config.execution is Execution.UPGRADE:
+            self._upgrade()
+        else:
+            self._downgrade()
 
-    def _domigrate(self):
+    def _upgrade(self):
         for migration_datetime in sorted(self.migrations.keys()):
             if not self.database_migration_names or migration_datetime > \
                     self.database_migration_names[0]:
@@ -76,7 +76,7 @@ class MigrationManager(object):
                       self.migrations[migration_datetime])
                 self._create_migration(migration_datetime)
 
-    def _dorollback(self):
+    def _downgrade(self):
         for migration_datetime in sorted(
                 self.database_migration_names, reverse=True):
             if self.migrations[migration_datetime]:
