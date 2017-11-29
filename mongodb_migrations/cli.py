@@ -32,6 +32,7 @@ class MigrationManager(object):
             self.config.mongo_database)
 
         # Discover the migration files
+        sys.path.insert(0, self.config.mongo_migrations_path)
         self._discover_migration_files(self.config.mongo_migrations_path)
 
         migrations_in_order = self._get_migrations_in_order()
@@ -67,10 +68,12 @@ class MigrationManager(object):
             if result:
                 self.migrations[result.group(1)] = file
 
+    def _get_module(self, fp):
+        migration_module = __import__(fp[:-3])
+        return migration_module
+
     def _get_migration_instance(self, fp):
-        import imp
-        migration_module = imp.load_source(
-            'fp', self.config.mongo_migrations_path + '/' + fp)
+        migration_module = self._get_module(fp)
         migration_object = migration_module.Migration(
             host=self.config.mongo_host,
             port=self.config.mongo_port,
@@ -162,10 +165,9 @@ class MigrationManager(object):
         return migrations
 
     def _get_prev_current_migrations(self, fp):
-        import imp
-        module = imp.load_source('fp', fp)
-        current = module.Migration.current_version
-        prev = module.Migration.previous_version
+        migration_module = self._get_module(fp)
+        current = migration_module.Migration.current_version
+        prev = migration_module.Migration.previous_version
 
         return prev, current
 
