@@ -62,7 +62,8 @@ class Configuration(object):
         self.mongo_migrations_path = args.migrations
         if args.downgrade == True:
             self.execution = Execution.DOWNGRADE
-        self.label_type = args.labeltype
+        self.label_type = LabelType.HASH if \
+            args.labeltype == LabelType.HASH.value else LabelType.TIMESTAMP
 
     def _from_ini(self):
         self.ini_parser = ConfigParser(
