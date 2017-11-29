@@ -8,6 +8,7 @@ class Execution(Enum):
     DOWNGRADE = 'execution_downgrade'
     MIGRATE = 'execution_migrate'
 
+
 class LabelType(Enum):
     HASH = 'hash'
     TIMESTAMP = 'timestamp'
@@ -50,7 +51,7 @@ class Configuration(object):
             '--downgrade', action='store_true', default=False,
             help='Downgrade instead of upgrade')
         self.arg_parser.add_argument(
-            '--labeltype', action='labeltype', default=LabelType.TIMESTAMP,
+            '--labeltype', default=LabelType.TIMESTAMP,
             help='Set the label type used by migration files')
 
         args = self.arg_parser.parse_args()
