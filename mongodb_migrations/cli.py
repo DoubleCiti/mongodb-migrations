@@ -48,7 +48,7 @@ class MigrationManager(object):
 
         sys.path.insert(0, self.config.mongo_migrations_path)
         {
-            Execution.MIGRATE: self._domigrate,
+            Execution.UPGRADE: self._domigrate,
             Execution.DOWNGRADE: self._dorollback
         }[self.config.execution]()
 

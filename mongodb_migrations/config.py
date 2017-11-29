@@ -5,8 +5,8 @@ from enum import Enum
 
 
 class Execution(Enum):
-    DOWNGRADE = 'execution_downgrade'
-    MIGRATE = 'execution_migrate'
+    DOWNGRADE = 'downgrade'
+    UPGRADE = 'upgrade'
 
 
 class LabelType(Enum):
@@ -20,7 +20,7 @@ class Configuration(object):
     mongo_port = '27017'
     mongo_database = None
     mongo_migrations_path = 'migrations'
-    execution = Execution.MIGRATE
+    execution = Execution.UPGRADE
     label_type = LabelType.TIMESTAMP
 
     def __init__(self):
