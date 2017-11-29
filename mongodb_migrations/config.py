@@ -1,7 +1,11 @@
 import argparse
 import os
 from configparser import ConfigParser
+from enum import Enum
 
+class Execution(Enum):
+    DOWNGRADE = 'execution_downgrade'
+    MIGRATE = 'execution_migrate'
 
 class Configuration(object):
     config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
@@ -9,6 +13,7 @@ class Configuration(object):
     mongo_port = '27017'
     mongo_database = None
     mongo_migrations_path = 'migrations'
+    execution = Execution.MIGRATE
 
     def __init__(self):
         self._from_ini()
@@ -28,13 +33,16 @@ class Configuration(object):
                             help="database of MongoDB", required=(self.mongo_database==None), default=self.mongo_database)
         self.arg_parser.add_argument('--migrations', default=self.mongo_migrations_path,
                             help="directory of migration files")
-
+        self.arg_parser.add_argument('--downgrade', action='store_true',
+                            default=False, help='Downgrade instead of upgrade')
         args = self.arg_parser.parse_args()
 
         self.mongo_host = args.host
         self.mongo_port = args.port
         self.mongo_database = args.database
         self.mongo_migrations_path = args.migrations
+        if args.downgrade == True:
+            self.execution = Execution.DOWNGRADE
 
     def _from_ini(self):
         self.ini_parser = ConfigParser(defaults={'host': self.mongo_host, 'port': self.mongo_port, 'migrations': self.mongo_migrations_path, 'database': self.mongo_database})
