@@ -42,11 +42,11 @@ class MigrationManager(object):
 
         sys.path.insert(0, self.config.mongo_migrations_path)
         {
-            Execution.MIGRATE: self._domigrate,
-            Execution.DOWNGRADE: self._dorollback
+            Execution.MIGRATE: self._do_migrate,
+            Execution.DOWNGRADE: self._do_rollback
         }[self.config.execution]()
 
-    def _domigrate(self):
+    def _do_migrate(self):
         for migration_datetime in sorted(self.migrations.keys()):
             if not self.database_migration_names or migration_datetime > self.database_migration_names[0]:
                 print("Trying to upgrade version: %s" % self.migrations[migration_datetime])
@@ -65,7 +65,7 @@ class MigrationManager(object):
                 print("Succeed to upgrade version: %s" % self.migrations[migration_datetime])
                 self._create_migration(migration_datetime)
 
-    def _dorollback(self):
+    def _do_rollback(self):
         for migration_datetime in sorted(self.database_migration_names, reverse=True):
             if self.migrations[migration_datetime]:
                 print("Trying to downgrade version: %s" % self.migrations[migration_datetime])
