@@ -63,3 +63,6 @@ target/
 
 # local config files
 config.ini
+
+# JetBrains IDE files
+.idea/**
