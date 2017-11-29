@@ -86,8 +86,9 @@ class MigrationManager(object):
                   " -> ".join(self.migrations_to_apply))
         for migration_label in self.migrations_to_apply:
             file_to_apply = self.migrations[migration_label]
-            print("Trying to apply version: %s (file %s)" %
-                  (migration_label, file_to_apply))
+            print("Trying to apply %s on version %s (file %s)" %
+                  (self.config.execution.value, migration_label,
+                   file_to_apply))
             try:
                 migration_object = self._get_migration_instance(file_to_apply)
                 if self.config.execution == Execution.UPGRADE:
@@ -102,14 +103,15 @@ class MigrationManager(object):
                         self.migrations_to_apply[-1]
                         if len(self.migrations_to_apply) == 2
                         else None, self.config.execution)
-                    break
             except Exception as e:
                 print("Failed to apply version: %s" % file_to_apply)
                 print(e.__class__)
                 if hasattr(e, 'message'):
                     print(e.message)
                 sys.exit(1)
-            print("Succeed to apply version: %s" % file_to_apply)
+            print("Successfully applied version %s" % file_to_apply)
+            if self.config.execution == Execution.DOWNGRADE:
+                break
 
     def _get_migration_names(self):
         return self.db.database_migrations.find().sort(
