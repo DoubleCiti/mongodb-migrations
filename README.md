@@ -92,7 +92,7 @@ For Downgrading the migrations, you need to pass a command line switch `--downgr
 
 ## Getting involved
 
-* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/DoubleCiti/mongodb-migrations/issues)
+* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/eXpandCC/mongodb-migrations/issues)
 
 ## Credits
 
