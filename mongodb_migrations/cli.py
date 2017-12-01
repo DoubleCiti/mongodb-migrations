@@ -4,7 +4,8 @@ mongodb-migrate
 Usage:
   mongodb-migrate -h | --help
   mongodb-migrate --version
-  mongodb-migrate migrate (upgrade|downgrade) [--database <databasename> --labeltype --host <hostname> --port <portnumber> --migrations <path> ]
+  mongodb-migrate migrate (upgrade|downgrade) --migrations=PATH [--database=DATABASENAME --labeltype=(TIMESTAMP|HASH) --host=HOSTNAME --port=NUMBER]
+  mongodb-migrate create --migrations=PATH [--database=DATABASENAME --labeltype=(TIMESTAMP|HASH) --host=HOSTNAME --port=NUMBER --description=DESCRIPTION]
 
 Options:
   -h --help                         Show this screen.
@@ -14,7 +15,7 @@ Options:
   --database <databasename>         Select the database to migrate.
   --migrations <path>               Set the folder where to look for migration files.
   --downgrade                       Indicates that the opration to be executed is a downgrade. If it is not present, an upgrade will be executed.
-  --labeltype (timestamp|hash)      Indicates which label type is used in the migrations. If no one is indicated, TIMESTAMP will be set.
+  --labeltype (TIMESTAMP|HASH)      Indicates which label type is used in the migrations. If no one is indicated, TIMESTAMP will be set.
 
 Examples:
   mongodb-migrate migrate upgrade --host 127.0.0.1 --database testDB
@@ -39,7 +40,7 @@ def main():
     # Here we'll try to dynamically match the command the user is trying to run
     # with a pre-defined command class we've already created.
     for k, v in options.iteritems():
-        if hasattr(commands, k):
+        if hasattr(commands, k) and v:
             cmd_module = getattr(commands, k)
             commands = getmembers(cmd_module, isclass)
             command = \

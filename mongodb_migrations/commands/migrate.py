@@ -26,7 +26,6 @@ class Migrate(Base):
             self.config.host, self.config.port, self.config.database)
 
         # Discover the migration files
-        sys.path.insert(0, self.config.migrations_path)
         self._discover_migration_files(self.config.migrations_path)
 
         migrations_in_order = self._get_migrations_in_order()
@@ -102,8 +101,8 @@ class Migrate(Base):
                     self._create_migration(
                         migration_label, self.config.execution)
                     self._create_migration(
-                        self.migrations_to_apply[-1]
-                        if len(self.migrations_to_apply) == 2
+                        self.migrations_to_apply[1]
+                        if len(self.migrations_to_apply) > 1
                         else None, self.config.execution)
             except Exception as e:
                 print("Failed to apply version: %s" % file_to_apply)
@@ -146,8 +145,7 @@ class Migrate(Base):
         else:
             migrations_prev2current = {}
             for fp in self.migrations.values():
-                prev, current = self._get_prev_current_migrations(
-                    self.config.migrations_path + '/' + fp)
+                prev, current = self._get_prev_current_migrations(fp)
                 migrations_prev2current[prev] = current
 
             last_mig = None

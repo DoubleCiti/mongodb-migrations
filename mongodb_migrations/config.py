@@ -31,15 +31,16 @@ class Configuration(object):
         self.host = options.get('--host', None) or self.host
         self.port = options.get('--port', self.port)
         self.database = options.get('--database', None) or self.database
-        self.database = options.get('--description', None) or self.description
+        self.description = \
+            options.get('--description', None) or self.description
         self.migrations_path = \
             options.get('--migrations', None) or self.migrations_path
         if options.get('upgrade', None) or options.get('downgrade', None):
-            self.execution = Execution.UPGRADE if options.get('upgrade', None) \
-                else Execution.DOWNGRADE
-        if options.get('--label-type', None):
+            self.execution = Execution.UPGRADE if \
+                options.get('upgrade', None) else Execution.DOWNGRADE
+        if options.get('--labeltype', None):
             self.label_type = LabelType.HASH if \
-                options.get('--label-type', None) == 'HASH' \
+                options.get('--labeltype', None) == 'HASH' \
                 else LabelType.TIMESTAMP
 
     def _from_ini(self):

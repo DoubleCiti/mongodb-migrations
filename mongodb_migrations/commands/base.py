@@ -1,3 +1,5 @@
+import sys
+
 from mongodb_migrations.config import Configuration
 
 
@@ -7,6 +9,8 @@ class Base(object):
         self.args = args
         self.kwargs = kwargs
         self.config = Configuration(options, args, kwargs)
+        if self.config.migrations_path:
+            sys.path.insert(0, self.config.migrations_path)
 
     def run(self):
         raise NotImplementedError('run() method not implemented')

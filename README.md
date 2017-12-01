@@ -5,64 +5,69 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 
 ## How to install
 
-* use `pip`
+### From source code
 
-    ```bash
-    $ pip install mongodb-migrations
-    ```
-
-* from source code
-
-    ```bash
     $ python setup.py install
-    ```
 
 ## How to use it
 
 ### Create a new migration file
 
-1. create a fold named `migrations`
-2. create a python file with name like `20160320145400_description.py`
-3. in `20160320145400_description.py` create a class named `Migration` and extends `BaseMigration`
-4. implement `upgrade` method
+Run the command:
 
-> CLI creation coming soon
+### From installation
+    $ mongodb-migrate create --migrations examples/ --labeltype HASH --description "My new migration"
+### From console, using python command
+    $ python -m mongodb_migrations.cli create --migrations examples/ --labeltype HASH --description "My new migration"
+
+It will generate a migration file in the folder indicated by `--migrations`, containing a template code.
+Depending on the value of `--labeltype`, the migrations will be guided sorted by a timestamp in the file name or an unique hash written inside the code (previous_version/current_version class variables).
+All you need to do is write the code inside `upgrade()` and `downgrade()` methods.
+
 
 ### Execute a migration
 
+### From installation
 Use cli `mongodb-migrate` to run migrations
+#### Downgrade
+    $ mongodb-migrate migrate downgrade --migrations examples/ --labeltype HASH --database fakedb
+#### Upgrade
+    $ mongodb-migrate migrate upgrade --migrations examples/ --labeltype HASH --database fakedb
+#### Create new migration
+    $ mongodb-migrate create --migrations examples/ --labeltype HASH --description "My new migration"
 
-If you don't wish to use the CLI, you can override the MigrationManager -> create_config and then call MigrationManager -> run. Example execution:
+### From console, using python command
+#### Downgrade
+    $ python -m mongodb_migrations.cli migrate downgrade --migrations examples/ --labeltype HASH --database fakedb
+#### Upgrade
+    $ python -m mongodb_migrations.cli migrate upgrade --migrations examples/ --labeltype HASH --database fakedb
+#### Create new migration
+    $ python -m mongodb_migrations.cli create --migrations examples/ --labeltype HASH --description "My new migration"
 
-```python
-    manager = MigrationManager()
-    manager.config.migrator_config = "foobar.ini"
-    manager.config._from_ini()
-    manager.run()
-```
 
-You can also use the same config to keep multiple keys, the manager allows you access by using:
-```python
-   ini_config_parser = manager.config.ini_parser
-   ini_config_parser.get('foo','bar')
-```
-
-## Configuration
-
-### In-line Parameters
+## Command-line arguments
 
 * `--host <string>` Set the database hostname.
 * `--port <integer>` Set the database port.
 * `--database <string>` Select the database to migrate.
 * `--migrations <string>` Set the folder where to look for migration files.
-* `--downgrade` Indicates that the opration to be executed is a downgrade. If it is not present, an upgrade will be executed.
-* `--labeltype [TIMESTAMP|HASH]` Indicates which label type is used in the migrations. If no one is indicated, TIMESTAMP will be set.
+* `--labeltype (TIMESTAMP|HASH)` Indicates which label type is used in the migrations. If no one is indicated, TIMESTAMP will be set.
+* `--description "<string>"` Set the description in the creation of a migration file.
 
-### In-line configuration example
+### Example
 
-`mongodb-migrations` will try to load `config.ini` first, if it's not found, default values will be used. If any command line argument is provided, it will override config from configuration file.
+```bash
+mongodb-migrate migrate upgrade --host 127.0.0.1 --port 27017 --database test --migrations examples
+```
 
-**Only database name is mandatory**
+
+## File Configurations
+
+### WARNING! Still not running well.
+
+`mongodb-migrations` will try to load `config.ini` first, if it's not found,
+default values will be used. If any command line argument is provided,
+it will override the values taken from the configuration file.
 
 ### config.ini example
 
@@ -74,25 +79,10 @@ database = test
 migrations = migrations
 ```
 
-### command line arguments example
-
-```bash
-mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
-```
-
-## Example
-
-Migration files are located in `examples`, run following command to run migrations:
-
-```
-$ MONGODB_MIGRATIONS_CONFIG=examples/config.ini mongodb-migrate
-```
-
-For Downgrading the migrations, you need to pass a command line switch `--downgrade`
 
 ## Getting involved
 
-* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/eXpandCC/mongodb-migrations/issues)
+* To report bugs or present new ideas, please log an issue in [Issues](https://github.com/eXpandCC/mongodb-migrations/issues)
 
 ## Credits
 
