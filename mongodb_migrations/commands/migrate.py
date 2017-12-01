@@ -1,4 +1,4 @@
-from mongodb_migrations.config import Configuration, Execution, LabelType
+from mongodb_migrations.commands.base import Base
 import os
 import sys
 import re
@@ -6,26 +6,28 @@ from datetime import datetime
 
 import pymongo
 
+from mongodb_migrations.config import Configuration, Execution, LabelType
 
-class MigrationManager(object):
+
+class Migrate(Base):
     config = None
     db = None
     migrations = {}
     migrations_to_apply = []
     database_migration_names = None
 
-    def __init__(self):
-        self.config = Configuration()
+    def __init__(self, options, *args, **kwargs):
+        super(Migrate, self).__init__(options, *args, **kwargs)
+        self.check_required_args(['database'])
 
     def run(self):
         # Connect to the DB
         self.db = self._get_mongo_database(
-            self.config.mongo_host, self.config.mongo_port,
-            self.config.mongo_database)
+            self.config.host, self.config.port, self.config.database)
 
         # Discover the migration files
-        sys.path.insert(0, self.config.mongo_migrations_path)
-        self._discover_migration_files(self.config.mongo_migrations_path)
+        sys.path.insert(0, self.config.migrations_path)
+        self._discover_migration_files(self.config.migrations_path)
 
         migrations_in_order = self._get_migrations_in_order()
 
@@ -54,7 +56,12 @@ class MigrationManager(object):
         sys.exit(0)
 
     def _discover_migration_files(self, migrations_path):
-        files = os.listdir(migrations_path)
+        try:
+            files = os.listdir(migrations_path)
+        except:
+            raise Exception(
+                "'%s' is not a valir migrations path" % migrations_path)
+
         for file in files:
             result = re.match('^([_a-zA-Z0-9]+)_[_a-zA-Z0-9]*\.py$', file)
             if result:
@@ -67,9 +74,9 @@ class MigrationManager(object):
     def _get_migration_instance(self, fp):
         migration_module = self._get_module(fp)
         migration_object = migration_module.Migration(
-            host=self.config.mongo_host,
-            port=self.config.mongo_port,
-            database=self.config.mongo_database)
+            host=self.config.host,
+            port=self.config.port,
+            database=self.config.database)
 
         return migration_object
 
@@ -81,8 +88,8 @@ class MigrationManager(object):
                   " -> ".join(self.migrations_to_apply))
         for migration_label in self.migrations_to_apply:
             file_to_apply = self.migrations[migration_label]
-            print("Trying to apply %s on version %s (file %s)" %
-                  (self.config.execution.value, migration_label,
+            print("> Trying to apply %s on version %s (file %s)" %
+                  (self.config.execution, migration_label,
                    file_to_apply))
             try:
                 migration_object = self._get_migration_instance(file_to_apply)
@@ -116,7 +123,7 @@ class MigrationManager(object):
         self.db.database_migrations.save(
             {'migration_label': migration_label,
              'created_at': datetime.now(),
-             'execution': execution.value})
+             'execution': execution})
 
     def _remove_migration(self, migration_label):
         self.db.database_migrations.remove(
@@ -140,7 +147,7 @@ class MigrationManager(object):
             migrations_prev2current = {}
             for fp in self.migrations.values():
                 prev, current = self._get_prev_current_migrations(
-                    self.config.mongo_migrations_path + '/' + fp)
+                    self.config.migrations_path + '/' + fp)
                 migrations_prev2current[prev] = current
 
             last_mig = None
