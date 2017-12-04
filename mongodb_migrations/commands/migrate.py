@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pymongo
 
-from mongodb_migrations.config import Configuration, Execution, LabelType
+from mongodb_migrations.config import Execution, LabelType
 
 
 class Migrate(Base):
@@ -62,7 +62,7 @@ class Migrate(Base):
                 "'%s' is not a valir migrations path" % migrations_path)
 
         for file in files:
-            result = re.match('^([_a-zA-Z0-9]+)_[_a-zA-Z0-9]*\.py$', file)
+            result = re.match('^([a-z0-9]+)_[_a-zA-Z0-9]*\.py$', file)
             if result:
                 self.migrations[result.group(1)] = file
 
@@ -96,7 +96,7 @@ class Migrate(Base):
                     migration_object.upgrade()
                     self._create_migration(
                         migration_label, self.config.execution)
-                else:
+                elif self.config.execution == Execution.DOWNGRADE:
                     migration_object.downgrade()
                     self._create_migration(
                         migration_label, self.config.execution)

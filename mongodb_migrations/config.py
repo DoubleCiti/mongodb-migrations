@@ -4,13 +4,13 @@ from enum import Enum
 
 
 class Execution(Enum):
-    DOWNGRADE = 'DOWNGRADE'
-    UPGRADE = 'UPGRADE'
+    DOWNGRADE = 'execution_downgrade'
+    UPGRADE = 'execution_upgrade'
 
 
 class LabelType(Enum):
-    HASH = 'hash'
-    TIMESTAMP = 'timestamp'
+    HASH = 'label_type_hash'
+    TIMESTAMP = 'label_type_timestamp'
 
 
 class Configuration(object):

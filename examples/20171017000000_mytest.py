@@ -12,4 +12,5 @@ class Migration(BaseMigration):
             self.db.test_collection.save(item)
 
     def downgrade(self):
-        self.db.test_collection.update_many({}, {"$unset": {"new_column1": ""}})
+        self.db.test_collection.update_many(
+            {}, {"$unset": {"new_column1": ""}})
