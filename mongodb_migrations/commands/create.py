@@ -68,8 +68,8 @@ class Create(Base):
 
         with open(self.config.migrations_path + ('/%s_%s.py' % (
                 current_label,
-                self.config.description.title().
-                replace(" ",""))), 'w+') as f:
+                self.config.description.
+                replace(" ", "").replace(".", "-"))), 'w+') as f:
             f.write(my_migration_temp)
 
     # FIXME: Should be generalized with Migration methods

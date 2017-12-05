@@ -29,7 +29,7 @@ class Configuration(object):
 
     def _from_console(self, options, args, kwargs):
         self.host = options.get('--host', None) or self.host
-        self.port = int(options.get('--port', self.port))
+        self.port = int(options.get('--port', None) or self.port)
         self.database = options.get('--database', None) or self.database
         self.description = \
             options.get('--description', None) or self.description
