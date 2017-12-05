@@ -1,4 +1,3 @@
-from mongodb_migrations.commands.base import Base
 import os
 import sys
 import re
@@ -6,6 +5,7 @@ from datetime import datetime
 
 import pymongo
 
+from mongodb_migrations.commands.base import Base
 from mongodb_migrations.config import Execution, LabelType
 
 
@@ -62,7 +62,7 @@ class Migrate(Base):
                 "'%s' is not a valir migrations path" % migrations_path)
 
         for file in files:
-            result = re.match('^([a-z0-9]+)_[_a-zA-Z0-9]*\.py$', file)
+            result = re.match('^([_a-z0-9]+)_[_a-zA-Z0-9.\-]*\.py$', file)
             if result:
                 self.migrations[result.group(1)] = file
 
@@ -122,7 +122,7 @@ class Migrate(Base):
         self.db.database_migrations.save(
             {'migration_label': migration_label,
              'created_at': datetime.now(),
-             'execution': execution})
+             'execution': str(execution)})
 
     def _remove_migration(self, migration_label):
         self.db.database_migrations.remove(

@@ -94,7 +94,7 @@ class Create(Base):
                 "'%s' is not a valir migrations path" % migrations_path)
 
         for file in files:
-            result = re.match('^([_a-zA-Z0-9]+)_[_a-zA-Z0-9]*\.py$', file)
+            result = re.match('^([_a-z0-9]+)_[_a-zA-Z0-9.\-]*\.py$', file)
             if result:
                 self.migrations[result.group(1)] = file
 
