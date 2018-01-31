@@ -61,7 +61,7 @@ class MigrationManager(object):
                     print(e.__class__)
                     if hasattr(e, 'message'):
                         print(e.message)
-                    sys.exit(1)
+                    raise
                 print("Succeed to upgrade version: %s" % self.migrations[migration_datetime])
                 self._create_migration(migration_datetime)
 
@@ -80,7 +80,7 @@ class MigrationManager(object):
                     print(e.__class__)
                     if hasattr(e, 'message'):
                         print(e.message)
-                    sys.exit(1)
+                    raise
                 print("Succeed to downgrade version: %s" % self.migrations[migration_datetime])
                 self._remove_migration(migration_datetime)
 
