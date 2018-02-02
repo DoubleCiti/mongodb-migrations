@@ -7,6 +7,7 @@ from datetime import datetime
 
 import pymongo
 
+
 # TODO:
 # split command to create and upgrade
 # create:
@@ -23,7 +24,8 @@ class MigrationManager(object):
         self.config = Configuration()
 
     def run(self):
-        self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database)
+        self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database,
+                                           self.config.mongo_url)
         files = os.listdir(self.config.mongo_migrations_path)
         for file in files:
             result = re.match('^(\d+)[_a-z]*\.py$', file)
@@ -54,7 +56,8 @@ class MigrationManager(object):
                     module = __import__(self.migrations[migration_datetime])
                     migration_object = module.Migration(host=self.config.mongo_host,
                                                         port=self.config.mongo_port,
-                                                        database=self.config.mongo_database)
+                                                        database=self.config.mongo_database,
+                                                        url=self.config.mongo_url)
                     migration_object.upgrade()
                 except Exception as e:
                     print("Failed to upgrade version: %s" % self.migrations[migration_datetime])
@@ -89,14 +92,20 @@ class MigrationManager(object):
 
     def _create_migration(self, migration_datetime):
         self.db.database_migrations.save({'migration_datetime': migration_datetime,
-                                     'created_at': datetime.now()})
+                                          'created_at': datetime.now()})
 
     def _remove_migration(self, migration_datetime):
         self.db.database_migrations.remove({'migration_datetime': migration_datetime})
 
-    def _get_mongo_database(self, host, port, database):
-        client = pymongo.MongoClient(host=host, port=port)
-        return client[database]
+    def _get_mongo_database(self, host, port, database, url):
+        if url:
+            client = pymongo.MongoClient(url)
+            return client.get_database()
+        elif database:
+            client = pymongo.MongoClient(host=host, port=port)
+            return client[database]
+        else:
+            raise Exception('no database or url provided')
 
 
 def main():
