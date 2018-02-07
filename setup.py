@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mongodb-migrations',
-    version='0.4.1',
+    version='0.5.0',
     description='A database migration tool for MongoDB',
     long_description=__doc__,
     url='https://github.com/DoubleCiti/mongodb-migrations',
@@ -14,8 +14,9 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'pymongo==3.2.1',
-        'configparser==3.5.0'
+        'pymongo>=3.2.1',
+        'configparser==3.5.0',
+        'enum34==1.1.6',
     ],
     entry_points={
         'console_scripts': ['mongodb-migrate=mongodb_migrations.cli:main'],

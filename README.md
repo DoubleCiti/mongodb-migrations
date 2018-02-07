@@ -44,7 +44,7 @@ You can also use the same config to keep multiple keys, the manager allows you a
 
 `mongodb-migrations` will try to load `config.ini` first, if it's not found, default values will be used. If any command line argument is provided, it will override config from configuration file.
 
-**Only database name is mandatory**
+**Database name or Url is mandatory**
 
 ### config.ini example
 
@@ -56,11 +56,24 @@ database = test
 migrations = migrations
 ```
 
+### alternative config.ini example
+```ini
+[mongo]
+url = mongodb://127.0.0.1:27017/test
+migrations = migrations
+```
+
 ### command line arguments example
 
 ```bash
 mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
 ```
+
+### alternative command line example
+```bash
+mongodb-migrate --url mongodb://127.0.0.1:27017/test --migrations examples
+```
+
 
 ## Example
 
