@@ -100,7 +100,7 @@ class MigrationManager(object):
     def _get_mongo_database(self, host, port, database, url):
         if url:
             client = pymongo.MongoClient(url)
-            return client.get_database()
+            return client.get_default_database()
         elif database:
             client = pymongo.MongoClient(host=host, port=port)
             return client[database]
