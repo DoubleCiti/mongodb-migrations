@@ -8,7 +8,7 @@ class BaseMigration(object):
                  database=None, url=None):
         if url:
             client = pymongo.MongoClient(url)
-            self.db = client.get_database()
+            self.db = client.get_default_database()
         elif database:
             client = pymongo.MongoClient(host=host, port=port)
             self.db = client[database]
