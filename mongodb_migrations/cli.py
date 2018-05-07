@@ -76,7 +76,8 @@ class MigrationManager(object):
                     module = __import__(self.migrations[migration_datetime])
                     migration_object = module.Migration(host=self.config.mongo_host,
                                                         port=self.config.mongo_port,
-                                                        database=self.config.mongo_database)
+                                                        database=self.config.mongo_database,
+                                                        url=self.config.mongo_url)
                     migration_object.downgrade()
                 except Exception as e:
                     print("Failed to downgrade version: %s" % self.migrations[migration_datetime])
