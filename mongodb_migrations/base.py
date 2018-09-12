@@ -5,7 +5,8 @@ class BaseMigration(object):
     def __init__(self,
                  host='127.0.0.1',
                  port='27017',
-                 database=None, url=None):
+                 database=None,
+                 url=None):
         if url:
             client = pymongo.MongoClient(url)
             self.db = client.get_default_database()

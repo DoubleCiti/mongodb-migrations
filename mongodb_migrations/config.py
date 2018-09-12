@@ -13,8 +13,8 @@ class Configuration(object):
     config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
     mongo_host = '127.0.0.1'
     mongo_port = '27017'
-    mongo_url = None
-    mongo_database = None
+    mongo_url = ''
+    mongo_database = ''
     mongo_migrations_path = 'migrations'
     execution = Execution.MIGRATE
 
