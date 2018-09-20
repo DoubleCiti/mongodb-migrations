@@ -24,6 +24,7 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 3. in `20160320145400_description.py` create a class named `Migration` and extends `BaseMigration`
 4. implement `upgrade` method
 5. use cli `mongodb-migrate` to run migrations
+6. `metastore` is an optional parameter of collection name where it stores the previous migrations
 
 If you don't wish to use the CLI, you can override the MigrationManager -> create_config and then call MigrationManager -> run. Example execution:
 
@@ -54,6 +55,7 @@ host = 127.0.0.1
 port = 27017
 database = test
 migrations = migrations
+metastore = database_migrations
 ```
 
 ### alternative config.ini example
