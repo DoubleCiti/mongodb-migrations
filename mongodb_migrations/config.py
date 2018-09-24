@@ -16,6 +16,7 @@ class Configuration(object):
     mongo_url = ''
     mongo_database = ''
     mongo_migrations_path = 'migrations'
+    metastore = 'database_migrations'
     execution = Execution.MIGRATE
 
     def __init__(self):
@@ -40,6 +41,8 @@ class Configuration(object):
                                      help="directory of migration files")
         self.arg_parser.add_argument('--downgrade', action='store_true',
                                      default=False, help='Downgrade instead of upgrade')
+        self.arg_parser.add_argument('--metastore', default="database_migrations",
+                                     help='Where to store db migrations')
         args = self.arg_parser.parse_args()
 
         if all([args.url, args.database]) or not any([args.url, args.database]):
@@ -50,6 +53,7 @@ class Configuration(object):
         self.mongo_port = args.port
         self.mongo_database = args.database
         self.mongo_migrations_path = args.migrations
+        self.metastore = args.metastore
 
         if args.downgrade:
             self.execution = Execution.DOWNGRADE
@@ -57,7 +61,8 @@ class Configuration(object):
     def _from_ini(self):
         self.ini_parser = ConfigParser(
             defaults={'host': self.mongo_host, 'port': self.mongo_port, 'migrations': self.mongo_migrations_path,
-                      'database': self.mongo_database, 'url': self.mongo_url})
+                      'database': self.mongo_database, 'url': self.mongo_url, 
+                      'metastore': self.metastore})
 
         try:
             fp = open(self.config_file)
@@ -74,3 +79,4 @@ class Configuration(object):
                 self.mongo_port = self.ini_parser.getint('mongo', 'port')
                 self.mongo_database = self.ini_parser.get('mongo', 'database')
                 self.mongo_migrations_path = self.ini_parser.get('mongo', 'migrations')
+                self.metastore = self.ini_parser.get('mongo', 'metastore')
