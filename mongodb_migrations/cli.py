@@ -29,14 +29,18 @@ class MigrationManager(object):
                                            self.config.mongo_url)
         files = os.listdir(self.config.mongo_migrations_path)
         for file in files:
-            result = re.match('^(\d+)[_a-z]*\.py$', file)
+            result = re.match('^(\d+).*\.py$', file)
             if result:
                 self.migrations[result.group(1)] = file[:-3]
 
         database_migrations = self._get_migration_names()
+        #NOTE this is the list of datetimes already run
         self.database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
         if set(self.database_migration_names) - set(self.migrations.keys()):
-            print("migrations doesn't match")
+            print("ERROR: migrations do not match")
+            print ("your db has run migrations with the following unexpected datetimes:")
+            for migration_datetime in set(self.database_migration_names) - set(self.migrations.keys()):
+                print('\t'+migration_datetime)
             sys.exit(1)
         if self.database_migration_names:
             print("Found previous migrations, last migration is version: %s" % self.database_migration_names[0])
@@ -53,7 +57,7 @@ class MigrationManager(object):
         for migration_datetime in sorted(self.migrations.keys()):
             if to_datetime and migration_datetime > to_datetime:
                 break
-            if not self.database_migration_names or migration_datetime > self.database_migration_names[0]:
+            if migration_datetime not in self.database_migration_names:
                 print("Trying to upgrade version: %s" % self.migrations[migration_datetime])
                 try:
                     module = __import__(self.migrations[migration_datetime])
