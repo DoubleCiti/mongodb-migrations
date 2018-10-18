@@ -34,7 +34,6 @@ class MigrationManager(object):
                 self.migrations[result.group(1)] = file[:-3]
 
         database_migrations = self._get_migration_names()
-        #NOTE this is the list of datetimes already run
         self.database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
         if set(self.database_migration_names) - set(self.migrations.keys()):
             print("ERROR: migrations do not match")
