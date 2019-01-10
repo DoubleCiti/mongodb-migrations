@@ -14,7 +14,9 @@ class Configuration(object):
     mongo_host = '127.0.0.1'
     mongo_port = '27017'
     mongo_url = ''
-    mongo_database = ''
+    mongo_database = ''    
+    mongo_auth_user = ''
+    mongo_auth_password = ''
     mongo_migrations_path = 'migrations'
     metastore = 'database_migrations'
     execution = Execution.MIGRATE
@@ -22,9 +24,9 @@ class Configuration(object):
     def __init__(self):
         self._from_ini()
         self._from_console()
-
-        if all([self.mongo_url, self.mongo_database]) or not any([self.mongo_url, self.mongo_database]):
-            raise Exception("Once mongo_url is provided, none of host, port and database can be provided")
+        # TODO: change to accept url and database for auth_database scenario
+        #if all([self.mongo_url, self.mongo_database]) or not any([self.mongo_url, self.mongo_database]):
+        #    raise Exception("Once mongo_url is provided, none of host, port and database can be provided")
 
     def _from_console(self):
         self.arg_parser = argparse.ArgumentParser(description="Mongodb migration parser")
@@ -34,7 +36,11 @@ class Configuration(object):
         self.arg_parser.add_argument('--port', type=int, metavar='p', default=self.mongo_port,
                                      help="port of MongoDB")
         self.arg_parser.add_argument('--database', metavar='d',
-                                     help="database of MongoDB", default=self.mongo_database)
+                                     help="database of MongoDB", default=self.mongo_database)        
+        self.arg_parser.add_argument('--authuser', metavar='au',
+                                     help="username for auth database of MongoDB", default=self.mongo_auth_user)
+        self.arg_parser.add_argument('--authpw', metavar='p',
+                                     help="password for auth database of MongoDB", default=self.mongo_auth_password)
         self.arg_parser.add_argument("--url", metavar='u',
                                      help="Mongo Connection String URI", default=self.mongo_url)
         self.arg_parser.add_argument('--migrations', default=self.mongo_migrations_path,
@@ -51,7 +57,9 @@ class Configuration(object):
         self.mongo_url = args.url
         self.mongo_host = args.host
         self.mongo_port = args.port
-        self.mongo_database = args.database
+        self.mongo_database = args.database        
+        self.mongo_auth_user = args.mongo_auth_user
+        self.mongo_auth_password = args.mongo_auth_password
         self.mongo_migrations_path = args.migrations
         self.metastore = args.metastore
 
@@ -61,7 +69,10 @@ class Configuration(object):
     def _from_ini(self):
         self.ini_parser = ConfigParser(
             defaults={'host': self.mongo_host, 'port': self.mongo_port, 'migrations': self.mongo_migrations_path,
-                      'database': self.mongo_database, 'url': self.mongo_url, 
+                      'database': self.mongo_database,                      
+                      'auth_user': self.mongo_auth_user,
+                      'auth_password': self.mongo_auth_password,
+                      'url': self.mongo_url, 
                       'metastore': self.metastore})
 
         try:
@@ -77,6 +88,8 @@ class Configuration(object):
                 self.mongo_url = self.ini_parser.get('mongo', 'url')
                 self.mongo_host = self.ini_parser.get('mongo', 'host')
                 self.mongo_port = self.ini_parser.getint('mongo', 'port')
-                self.mongo_database = self.ini_parser.get('mongo', 'database')
+                self.mongo_database = self.ini_parser.get('mongo', 'database')                
+                self.mongo_auth_user = self.ini_parser.get('mongo', 'auth_user')
+                self.mongo_auth_password = self.ini_parser.get('mongo', 'auth_password')
                 self.mongo_migrations_path = self.ini_parser.get('mongo', 'migrations')
                 self.metastore = self.ini_parser.get('mongo', 'metastore')

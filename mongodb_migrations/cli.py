@@ -25,6 +25,7 @@ class MigrationManager(object):
 
     def run(self):
         self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database,
+                                           self.config.mongo_auth_user, self.config.mongo_auth_password,
                                            self.config.mongo_url)
         files = os.listdir(self.config.mongo_migrations_path)
         for file in files:
@@ -56,7 +57,9 @@ class MigrationManager(object):
                     module = __import__(self.migrations[migration_datetime])
                     migration_object = module.Migration(host=self.config.mongo_host,
                                                         port=self.config.mongo_port,
-                                                        database=self.config.mongo_database,
+                                                        database=self.config.mongo_database,                                                        
+                                                        auth_user=self.config.mongo_auth_user,
+                                                        auth_password=self.config.mongo_auth_password,
                                                         url=self.config.mongo_url)
                     migration_object.upgrade()
                 except Exception as e:
@@ -76,7 +79,9 @@ class MigrationManager(object):
                     module = __import__(self.migrations[migration_datetime])
                     migration_object = module.Migration(host=self.config.mongo_host,
                                                         port=self.config.mongo_port,
-                                                        database=self.config.mongo_database,
+                                                        database=self.config.mongo_database,                                                        
+                                                        auth_user=self.config.mongo_auth_user,
+                                                        auth_password=self.config.mongo_auth_password,
                                                         url=self.config.mongo_url)
                     migration_object.downgrade()
                 except Exception as e:
@@ -98,15 +103,18 @@ class MigrationManager(object):
     def _remove_migration(self, migration_datetime):
         self.db[self.config.metastore].remove({'migration_datetime': migration_datetime})
 
-    def _get_mongo_database(self, host, port, database, url):
-        if url:
+    def _get_mongo_database(self, host, port, database, auth_user, auth_password, url):
+        if url and database and auth_user is not None: #provide auth_database in url (mongodb://mongohostname:27017/auth_database)
+            client = pymongo.MongoClient(url, user=auth_user, password=auth_password)
+            return client.get_database(database)
+        elif url:
             client = pymongo.MongoClient(url)
             return client.get_default_database()
         elif database:
             client = pymongo.MongoClient(host=host, port=port)
             return client[database]
         else:
-            raise Exception('no database or url provided')
+            raise Exception('no database, url or auth_database in url provided')
 
 
 def main():
