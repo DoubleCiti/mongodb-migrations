@@ -14,9 +14,9 @@ class Configuration(object):
     mongo_host = '127.0.0.1'
     mongo_port = '27017'
     mongo_url = ''
-    mongo_database = ''    
-    mongo_auth_user = ''
-    mongo_auth_password = ''
+    mongo_database = ''
+    mongo_username = ''
+    mongo_password = ''
     mongo_migrations_path = 'migrations'
     metastore = 'database_migrations'
     execution = Execution.MIGRATE
@@ -37,10 +37,10 @@ class Configuration(object):
                                      help="port of MongoDB")
         self.arg_parser.add_argument('--database', metavar='d',
                                      help="database of MongoDB", default=self.mongo_database)        
-        self.arg_parser.add_argument('--authuser', metavar='au',
-                                     help="username for auth database of MongoDB", default=self.mongo_auth_user)
-        self.arg_parser.add_argument('--authpw', metavar='p',
-                                     help="password for auth database of MongoDB", default=self.mongo_auth_password)
+        self.arg_parser.add_argument('--username', metavar='U',
+                                     help="username for auth database of MongoDB", default=self.mongo_username)
+        self.arg_parser.add_argument('--password', metavar='p',
+                                     help="password for auth database of MongoDB", default=self.mongo_password)
         self.arg_parser.add_argument("--url", metavar='u',
                                      help="Mongo Connection String URI", default=self.mongo_url)
         self.arg_parser.add_argument('--migrations', default=self.mongo_migrations_path,
@@ -51,15 +51,16 @@ class Configuration(object):
                                      help='Where to store db migrations')
         args = self.arg_parser.parse_args()
 
+        # TODO: change to accept url and database for auth_database scenario
         if all([args.url, args.database]) or not any([args.url, args.database]):
             self.arg_parser.error("--url or --database must be used but not both")
 
         self.mongo_url = args.url
         self.mongo_host = args.host
         self.mongo_port = args.port
-        self.mongo_database = args.database        
-        self.mongo_auth_user = args.mongo_auth_user
-        self.mongo_auth_password = args.mongo_auth_password
+        self.mongo_database = args.database
+        self.mongo_username = args.mongo_username
+        self.mongo_password = args.mongo_password
         self.mongo_migrations_path = args.migrations
         self.metastore = args.metastore
 
@@ -69,9 +70,9 @@ class Configuration(object):
     def _from_ini(self):
         self.ini_parser = ConfigParser(
             defaults={'host': self.mongo_host, 'port': self.mongo_port, 'migrations': self.mongo_migrations_path,
-                      'database': self.mongo_database,                      
-                      'auth_user': self.mongo_auth_user,
-                      'auth_password': self.mongo_auth_password,
+                      'database': self.mongo_database,
+                      'username': self.mongo_username,
+                      'password': self.mongo_password,
                       'url': self.mongo_url, 
                       'metastore': self.metastore})
 
@@ -88,8 +89,8 @@ class Configuration(object):
                 self.mongo_url = self.ini_parser.get('mongo', 'url')
                 self.mongo_host = self.ini_parser.get('mongo', 'host')
                 self.mongo_port = self.ini_parser.getint('mongo', 'port')
-                self.mongo_database = self.ini_parser.get('mongo', 'database')                
-                self.mongo_auth_user = self.ini_parser.get('mongo', 'auth_user')
-                self.mongo_auth_password = self.ini_parser.get('mongo', 'auth_password')
+                self.mongo_database = self.ini_parser.get('mongo', 'database')
+                self.mongo_username = self.ini_parser.get('mongo', 'username')
+                self.mongo_password = self.ini_parser.get('mongo', 'password')
                 self.mongo_migrations_path = self.ini_parser.get('mongo', 'migrations')
                 self.metastore = self.ini_parser.get('mongo', 'metastore')
