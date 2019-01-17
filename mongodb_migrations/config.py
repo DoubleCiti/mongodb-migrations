@@ -39,7 +39,7 @@ class Configuration(object):
                                      help="database of MongoDB", default=self.mongo_database)        
         self.arg_parser.add_argument('--username', metavar='U',
                                      help="username for auth database of MongoDB", default=self.mongo_username)
-        self.arg_parser.add_argument('--password', metavar='p',
+        self.arg_parser.add_argument('--password', metavar='P',
                                      help="password for auth database of MongoDB", default=self.mongo_password)
         self.arg_parser.add_argument("--url", metavar='u',
                                      help="Mongo Connection String URI", default=self.mongo_url)
