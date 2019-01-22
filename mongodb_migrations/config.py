@@ -52,8 +52,8 @@ class Configuration(object):
         args = self.arg_parser.parse_args()
 
         # TODO: change to accept url and database for auth_database scenario
-        if all([args.url, args.database]) or not any([args.url, args.database]):
-            self.arg_parser.error("--url or --database must be used but not both")
+        #if all([args.url, args.database]) or not any([args.url, args.database]):
+        #    self.arg_parser.error("--url or --database must be used but not both")
 
         self.mongo_url = args.url
         self.mongo_host = args.host
