@@ -36,7 +36,7 @@ class Configuration(object):
         self.arg_parser.add_argument('--port', type=int, metavar='p', default=self.mongo_port,
                                      help="port of MongoDB")
         self.arg_parser.add_argument('--database', metavar='d',
-                                     help="database of MongoDB", default=self.mongo_database)        
+                                     help="database of MongoDB", default=self.mongo_database)
         self.arg_parser.add_argument('--username', metavar='U',
                                      help="username for auth database of MongoDB", default=self.mongo_username)
         self.arg_parser.add_argument('--password', metavar='P',
@@ -59,8 +59,8 @@ class Configuration(object):
         self.mongo_host = args.host
         self.mongo_port = args.port
         self.mongo_database = args.database
-        self.mongo_username = args.mongo_username
-        self.mongo_password = args.mongo_password
+        self.mongo_username = args.username
+        self.mongo_password = args.password
         self.mongo_migrations_path = args.migrations
         self.metastore = args.metastore
 
