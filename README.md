@@ -65,6 +65,17 @@ url = mongodb://127.0.0.1:27017/test
 migrations = migrations
 ```
 
+### auth-db config.ini example
+```ini
+[mongo]
+url = mongodb://127.0.0.1:27017/admin
+username = admin
+password = secret123
+database = test
+migrations = migrations
+metastore = database_migrations
+```
+
 ### command line arguments example
 
 ```bash
