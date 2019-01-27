@@ -105,3 +105,4 @@ For Downgrading the migrations, you need to pass a command line switch `--downgr
 ## Contributors
 
 * [Rohit Garg](https://github.com/rohitggarg)
+* [mpgalaxy](https://github.com/mpgalaxy)
