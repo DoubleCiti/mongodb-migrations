@@ -20,7 +20,7 @@ class MigrationManager(object):
     migrations = {}
     database_migration_names = None
 
-    def __init__(self, config):
+    def __init__(self, config=Configuration()):
         self.config = config
 
     def run(self):
