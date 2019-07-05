@@ -20,8 +20,8 @@ class MigrationManager(object):
     migrations = {}
     database_migration_names = None
 
-    def __init__(self):
-        self.config = Configuration()
+    def __init__(self, config):
+        self.config = config
 
     def run(self):
         self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database,
@@ -118,5 +118,7 @@ class MigrationManager(object):
 
 
 def main():
-    manager = MigrationManager()
+    config = Configuration()
+    config.from_console()
+    manager = MigrationManager(config)
     manager.run()
