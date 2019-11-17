@@ -20,6 +20,7 @@ class Configuration(object):
     mongo_migrations_path = 'migrations'
     metastore = 'database_migrations'
     execution = Execution.MIGRATE
+    to_datetime = None
 
     def __init__(self):
         self._from_ini()
@@ -48,6 +49,8 @@ class Configuration(object):
                                      default=False, help='Downgrade instead of upgrade')
         self.arg_parser.add_argument('--metastore', default="database_migrations",
                                      help='Where to store db migrations')
+        self.arg_parser.add_argument('--to_datetime', default=None,
+                                     help="Upgrade/downgrade to reach the migration with the given datetime prefix")
         args = self.arg_parser.parse_args()
 
         # TODO: change to accept url and database for auth_database scenario
@@ -62,6 +65,7 @@ class Configuration(object):
         self.mongo_password = args.password
         self.mongo_migrations_path = args.migrations
         self.metastore = args.metastore
+        self.to_datetime = args.to_datetime
 
         if args.downgrade:
             self.execution = Execution.DOWNGRADE

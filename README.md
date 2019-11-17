@@ -98,6 +98,11 @@ $ MONGODB_MIGRATIONS_CONFIG=examples/config.ini mongodb-migrate
 
 For Downgrading the migrations, you need to pass a command line switch `--downgrade`
 
+To upgrade/downgrade only to a specific migration, use `--to_datetime`. This command will upgrade to the migration with prefix `20191115180633`:
+```bash
+mongodb-migrate --url mongodb://127.0.0.1:27017/test --migrations examples --to_datetime 20191115180633
+```
+
 ## Getting involved
 
 * if you find any bug or need anything, please log an issue here: [Issues](https://github.com/DoubleCiti/mongodb-migrations/issues)

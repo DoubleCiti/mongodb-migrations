@@ -47,10 +47,12 @@ class MigrationManager(object):
         {
             Execution.MIGRATE: self._do_migrate,
             Execution.DOWNGRADE: self._do_rollback
-        }[self.config.execution]()
+        }[self.config.execution](self.config.to_datetime)
 
-    def _do_migrate(self):
+    def _do_migrate(self, to_datetime=None):
         for migration_datetime in sorted(self.migrations.keys()):
+            if to_datetime and migration_datetime > to_datetime:
+                break
             if not self.database_migration_names or migration_datetime > self.database_migration_names[0]:
                 print("Trying to upgrade version: %s" % self.migrations[migration_datetime])
                 try:
@@ -71,8 +73,10 @@ class MigrationManager(object):
                 print("Succeed to upgrade version: %s" % self.migrations[migration_datetime])
                 self._create_migration(migration_datetime)
 
-    def _do_rollback(self):
+    def _do_rollback(self, to_datetime=None):
         for migration_datetime in sorted(self.database_migration_names, reverse=True):
+            if to_datetime and migration_datetime <= to_datetime:
+                break
             if self.migrations[migration_datetime]:
                 print("Trying to downgrade version: %s" % self.migrations[migration_datetime])
                 try:
