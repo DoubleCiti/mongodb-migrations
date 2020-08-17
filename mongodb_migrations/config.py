@@ -2,6 +2,7 @@ import argparse
 import os
 from configparser import ConfigParser
 from enum import Enum
+from typing import Dict, Any
 
 
 class Execution(Enum):
@@ -10,9 +11,9 @@ class Execution(Enum):
 
 
 class Configuration(object):
-    config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
+    config_file = ''
     mongo_host = '127.0.0.1'
-    mongo_port = '27017'
+    mongo_port = 27017
     mongo_url = ''
     mongo_database = ''
     mongo_username = ''
@@ -22,8 +23,21 @@ class Configuration(object):
     execution = Execution.MIGRATE
     to_datetime = None
 
-    def __init__(self):
-        self._from_ini()
+    def __init__(self, config: Dict[str, Any]=None):
+        if not config:
+            self.config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
+            self._from_ini()
+        else:
+            self.mongo_host = config.get('mongo_host', '127.0.0.1')
+            self.mongo_port = config.get('mongo_port', 27017)
+            self.mongo_url = config.get('mongo_url', '')
+            self.mongo_database = config.get('mongo_database', '')
+            self.mongo_username = config.get('mongo_username', '')
+            self.mongo_password = config.get('mongo_password', '')
+            self.mongo_migrations_path = config.get('mongo_migrations_path', 'migrations')
+            self.metastore = config.get('metastore', 'database_migrations')
+            self.execution = config.get('execution', Execution.MIGRATE)
+            self.to_datetime = config.get('to_datetime', None)
         # TODO: change to accept url and database for auth_database scenario
         #if all([self.mongo_url, self.mongo_database]) or not any([self.mongo_url, self.mongo_database]):
         #    raise Exception("Once mongo_url is provided, none of host, port and database can be provided")
