@@ -23,7 +23,7 @@ class Configuration(object):
     execution = Execution.MIGRATE
     to_datetime = None
 
-    def __init__(self, config=None):
+    def __init__(self, config: Dict[str, Any]=None):
         if not config:
             self.config_file = os.getenv('MONGODB_MIGRATIONS_CONFIG', 'config.ini')
             self._from_ini()

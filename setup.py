@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mongodb-migrations',
-    version='0.7.0',
+    version='1.0.0',
     description='A database migration tool for MongoDB',
     long_description=__doc__,
     url='https://github.com/DoubleCiti/mongodb-migrations',
@@ -28,11 +28,10 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
 )
