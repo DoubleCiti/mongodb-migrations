@@ -1,3 +1,2 @@
 pymongo
 configparser
-enum34
