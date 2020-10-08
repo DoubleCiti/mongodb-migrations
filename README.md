@@ -20,7 +20,7 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 ## How to use it
 
 1. create a fold named `migrations`
-2. create a python file with name like `20160320145400_description.py`
+2. create a python file with name in form of `TIMESTAMP_description.py` , i.e.`20160320145400_description.py`, otherwise migration file won't be found.
 3. in `20160320145400_description.py` create a class named `Migration` and extends `BaseMigration`
 4. implement `upgrade` method
 5. use cli `mongodb-migrate` to run migrations
