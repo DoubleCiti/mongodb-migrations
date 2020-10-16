@@ -30,7 +30,7 @@ If you don't wish to use the CLI, you can override the MigrationManager -> creat
 
 ```python
     manager = MigrationManager()
-    manager.config.migrator_config = "foobar.ini"
+    manager.config.config_file = "foobar.ini"
     manager.config._from_ini()
     manager.run()
 ```
