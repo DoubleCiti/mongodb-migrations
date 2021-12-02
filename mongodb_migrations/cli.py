@@ -101,7 +101,7 @@ class MigrationManager(object):
         return self.db[self.config.metastore].find().sort('migration_datetime', pymongo.DESCENDING)
 
     def _create_migration(self, migration_datetime):
-        self.db[self.config.metastore].save({'migration_datetime': migration_datetime,
+        self.db[self.config.metastore].insert_one({'migration_datetime': migration_datetime,
                                           'created_at': datetime.now()})
 
     def _remove_migration(self, migration_datetime):
