@@ -14,7 +14,7 @@ if sys.version_info < (3, 4):
 
 setup(
     name='mongodb-migrations',
-    version='1.0.1',
+    version='1.1.0',
     description='A database migration tool for MongoDB',
     long_description=__doc__,
     url='https://github.com/DoubleCiti/mongodb-migrations',
@@ -42,6 +42,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
 )
