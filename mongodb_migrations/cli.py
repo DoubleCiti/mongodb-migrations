@@ -105,7 +105,7 @@ class MigrationManager(object):
                                           'created_at': datetime.now()})
 
     def _remove_migration(self, migration_datetime):
-        self.db[self.config.metastore].remove({'migration_datetime': migration_datetime})
+        self.db[self.config.metastore].delete_one({'migration_datetime': migration_datetime})
 
     def _get_mongo_database(self, host, port, database, user, password, url):
         if url and database and user is not None: #provide auth_database in url (mongodb://mongohostname:27017/auth_database)
