@@ -61,9 +61,9 @@ class Configuration(object):
                                      help="directory of migration files")
         self.arg_parser.add_argument('--downgrade', action='store_true',
                                      default=False, help='Downgrade instead of upgrade')
-        self.arg_parser.add_argument('--metastore', default="database_migrations",
+        self.arg_parser.add_argument('--metastore', default=self.metastore,
                                      help='Where to store db migrations')
-        self.arg_parser.add_argument('--to_datetime', default=None,
+        self.arg_parser.add_argument('--to_datetime', default=self.to_datetime,
                                      help="Upgrade/downgrade to reach the migration with the given datetime prefix")
         args = self.arg_parser.parse_args()
 
@@ -90,7 +90,7 @@ class Configuration(object):
                       'database': self.mongo_database,
                       'username': self.mongo_username,
                       'password': self.mongo_password,
-                      'url': self.mongo_url, 
+                      'url': self.mongo_url,
                       'metastore': self.metastore})
 
         try:
