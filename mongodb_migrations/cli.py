@@ -49,6 +49,31 @@ class MigrationManager(object):
             Execution.DOWNGRADE: self._do_rollback
         }[self.config.execution](self.config.to_datetime)
 
+    def create_migration(self):
+        if not os.path.exists(self.config.mongo_migrations_path):
+            os.makedirs(self.config.mongo_migrations_path)
+
+        if not self.config.description:
+            print("Please provide a description for the migration using --description.")
+            sys.exit(1)
+
+        filename = "%s/%s_%s.py" % (
+            self.config.mongo_migrations_path,
+            datetime.now().strftime('%Y%m%d%H%M%S'),
+            self.config.description)
+        with open(filename, 'w') as f:
+            f.write("from mongodb_migrations.base import BaseMigration\n\n\n")
+
+            f.write("class Migration(BaseMigration):\n")
+
+            f.write("    def upgrade(self):\n")
+            f.write("        pass\n\n")
+
+            f.write("    def downgrade(self):\n")
+            f.write("        pass\n")
+
+        print("Migration created: %s" % filename)
+
     def _do_migrate(self, to_datetime=None):
         for migration_datetime in sorted(self.migrations.keys()):
             if to_datetime and migration_datetime > to_datetime:
@@ -63,7 +88,8 @@ class MigrationManager(object):
                                                         user=self.config.mongo_username,
                                                         password=self.config.mongo_password,
                                                         url=self.config.mongo_url)
-                    migration_object.upgrade()
+                    if not self.config.dry_run:
+                        migration_object.upgrade()
                 except Exception as e:
                     print("Failed to upgrade version: %s" % self.migrations[migration_datetime])
                     print(e.__class__)
@@ -87,7 +113,8 @@ class MigrationManager(object):
                                                         user=self.config.mongo_username,
                                                         password=self.config.mongo_password,
                                                         url=self.config.mongo_url)
-                    migration_object.downgrade()
+                    if not self.config.dry_run:
+                        migration_object.downgrade()
                 except Exception as e:
                     print("Failed to downgrade version: %s" % self.migrations[migration_datetime])
                     print(e.__class__)
@@ -126,3 +153,9 @@ def main():
     config.from_console()
     manager = MigrationManager(config)
     manager.run()
+
+def create_migration():
+    config = Configuration()
+    config.from_console()
+    manager = MigrationManager(config)
+    manager.create_migration()

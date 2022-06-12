@@ -22,6 +22,8 @@ class Configuration(object):
     metastore = 'database_migrations'
     execution = Execution.MIGRATE
     to_datetime = None
+    dry_run = False
+    description = ''
 
     def __init__(self, config: Dict[str, Any]=None):
         if not config:
@@ -38,6 +40,7 @@ class Configuration(object):
             self.metastore = config.get('metastore', 'database_migrations')
             self.execution = config.get('execution', Execution.MIGRATE)
             self.to_datetime = config.get('to_datetime', None)
+            self.dry_run = config.get('dry_run', False)
         # TODO: change to accept url and database for auth_database scenario
         #if all([self.mongo_url, self.mongo_database]) or not any([self.mongo_url, self.mongo_database]):
         #    raise Exception("Once mongo_url is provided, none of host, port and database can be provided")
@@ -65,6 +68,9 @@ class Configuration(object):
                                      help='Where to store db migrations')
         self.arg_parser.add_argument('--to_datetime', default=self.to_datetime,
                                      help="Upgrade/downgrade to reach the migration with the given datetime prefix")
+        self.arg_parser.add_argument('--dry-run', action='store_true',
+                                     help="Don't actually do anything", default=self.dry_run)
+        self.arg_parser.add_argument('--description', help="Description of the migration")
         args = self.arg_parser.parse_args()
 
         # TODO: change to accept url and database for auth_database scenario
@@ -80,6 +86,8 @@ class Configuration(object):
         self.mongo_migrations_path = args.migrations
         self.metastore = args.metastore
         self.to_datetime = args.to_datetime
+        self.description = args.description
+        self.dry_run = args.dry_run
 
         if args.downgrade:
             self.execution = Execution.DOWNGRADE
@@ -111,3 +119,4 @@ class Configuration(object):
                 self.mongo_password = self.ini_parser.get('mongo', 'password')
                 self.mongo_migrations_path = self.ini_parser.get('mongo', 'migrations')
                 self.metastore = self.ini_parser.get('mongo', 'metastore')
+                self.dry_run = self.ini_parser.getboolean('mongo', 'dry_run')
