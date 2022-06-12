@@ -26,6 +26,7 @@ setup(
     version='1.2.1',
     description=DESCRIPTION,
     long_description=get_read_me(),
+    long_description_content_type="text/markdown",
     url='https://github.com/DoubleCiti/mongodb-migrations',
     author='David Xie',
     author_email='david30xie@gmail.com',
