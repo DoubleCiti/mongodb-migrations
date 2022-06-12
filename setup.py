@@ -14,7 +14,7 @@ if sys.version_info < (3, 4):
 
 setup(
     name='mongodb-migrations',
-    version='1.1.1',
+    version='1.2.0',
     description='A database migration tool for MongoDB',
     long_description=__doc__,
     url='https://github.com/DoubleCiti/mongodb-migrations',
@@ -27,7 +27,10 @@ setup(
     zip_safe=False,
     install_requires=install_requires,
     entry_points={
-        'console_scripts': ['mongodb-migrate=mongodb_migrations.cli:main'],
+        'console_scripts': [
+            'mongodb-migrate=mongodb_migrations.cli:main',
+            'mongodb-migrate-create=mongodb_migrations.cli:create_migration'
+        ],
     },
     classifiers=[
         'Development Status :: 4 - Beta',

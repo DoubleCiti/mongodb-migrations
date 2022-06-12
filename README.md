@@ -26,6 +26,8 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 5. use cli `mongodb-migrate` to run migrations
 6. `metastore` is an optional parameter of collection name where it stores the previous migrations
 
+**Now there is an easier way to create a migration file, command `mongodb-migrate-create --description <description>` will create an empty migration file in `migrations` folder or the folder provided by `--migrations`.**
+
 If you don't wish to use the CLI, you can override the MigrationManager -> create_config and then call MigrationManager -> run. Example execution:
 
 ```python
