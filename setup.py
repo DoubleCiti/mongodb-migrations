@@ -12,11 +12,20 @@ if sys.version_info < (3, 4):
     # credit to [donnemartin](https://github.com/donnemartin) and [geraldlnj](https://github.com/geraldlnj
     install_requires.append('enum34>=1.1.6')
 
+DESCRIPTION = "A database migration tool for MongoDB"
+
+def get_read_me():
+    try:
+        with open('README.md') as f:
+            return f.read()
+    except IOError:
+        return DESCRIPTION
+
 setup(
     name='mongodb-migrations',
-    version='1.2.0',
-    description='A database migration tool for MongoDB',
-    long_description=__doc__,
+    version='1.2.1',
+    description=DESCRIPTION,
+    long_description=get_read_me(),
     url='https://github.com/DoubleCiti/mongodb-migrations',
     author='David Xie',
     author_email='david30xie@gmail.com',
