@@ -16,7 +16,7 @@ class Configuration(object):
     mongo_port = 27017
     mongo_url = ''
     mongo_database = ''
-    mongo_username = ''
+    mongo_username = None
     mongo_password = ''
     mongo_migrations_path = 'migrations'
     metastore = 'database_migrations'
@@ -34,7 +34,7 @@ class Configuration(object):
             self.mongo_port = config.get('mongo_port', 27017)
             self.mongo_url = config.get('mongo_url', '')
             self.mongo_database = config.get('mongo_database', '')
-            self.mongo_username = config.get('mongo_username', '')
+            self.mongo_username = config.get('mongo_username', None)
             self.mongo_password = config.get('mongo_password', '')
             self.mongo_migrations_path = config.get('mongo_migrations_path', 'migrations')
             self.metastore = config.get('metastore', 'database_migrations')
