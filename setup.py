@@ -23,7 +23,7 @@ def get_read_me():
 
 setup(
     name='mongodb-migrations',
-    version='1.2.1',
+    version='1.3.0',
     description=DESCRIPTION,
     long_description=get_read_me(),
     long_description_content_type="text/markdown",
