@@ -29,7 +29,7 @@ class MigrationManager(object):
                                            self.config.mongo_url)
         files = os.listdir(self.config.mongo_migrations_path)
         for file in files:
-            result = re.match('^(\d+)[_a-z]*\.py$', file)
+            result = re.match('^(\d+)[._a-z\d]*\.py$', file)
             if result:
                 self.migrations[result.group(1)] = file[:-3]
 
