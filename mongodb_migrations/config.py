@@ -107,7 +107,7 @@ class Configuration(object):
             pass
         else:
             with fp:
-                self.ini_parser.readfp(fp)
+                self.ini_parser.read_file(fp)
                 if not self.ini_parser.sections():
                     raise Exception("Cannot find %s or it doesn't have sections." % self.config_file)
 
