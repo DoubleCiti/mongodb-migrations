@@ -1,4 +1,5 @@
 from __future__ import print_function
+import asyncio
 from .config import Configuration, Execution
 import os
 import sys
@@ -23,7 +24,7 @@ class MigrationManager(object):
     def __init__(self, config=Configuration()):
         self.config = config
 
-    def run(self):
+    async def run(self):
         self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database,
                                            self.config.mongo_username, self.config.mongo_password,
                                            self.config.mongo_url)
@@ -49,7 +50,7 @@ class MigrationManager(object):
             Execution.DOWNGRADE: self._do_rollback
         }[self.config.execution](self.config.to_datetime)
 
-    def create_migration(self):
+    async def create_migration(self):
         if not os.path.exists(self.config.mongo_migrations_path):
             os.makedirs(self.config.mongo_migrations_path)
 
@@ -66,15 +67,15 @@ class MigrationManager(object):
 
             f.write("class Migration(BaseMigration):\n")
 
-            f.write("    def upgrade(self):\n")
+            f.write("    async def upgrade(self):\n")
             f.write("        pass\n\n")
 
-            f.write("    def downgrade(self):\n")
+            f.write("    async def downgrade(self):\n")
             f.write("        pass\n")
 
         print("Migration created: %s" % filename)
 
-    def _do_migrate(self, to_datetime=None):
+    async def _do_migrate(self, to_datetime=None):
         for migration_datetime in sorted(self.migrations.keys()):
             if to_datetime and migration_datetime > to_datetime:
                 break
@@ -89,7 +90,7 @@ class MigrationManager(object):
                                                         password=self.config.mongo_password,
                                                         url=self.config.mongo_url)
                     if not self.config.dry_run:
-                        migration_object.upgrade()
+                        await migration_object.upgrade()
                 except Exception as e:
                     print("Failed to upgrade version: %s" % self.migrations[migration_datetime])
                     print(e.__class__)
@@ -100,7 +101,7 @@ class MigrationManager(object):
                 if not self.config.dry_run:
                     self._create_migration(migration_datetime)
 
-    def _do_rollback(self, to_datetime=None):
+    async def _do_rollback(self, to_datetime=None):
         for migration_datetime in sorted(self.database_migration_names, reverse=True):
             if to_datetime and migration_datetime <= to_datetime:
                 break
@@ -115,7 +116,7 @@ class MigrationManager(object):
                                                         password=self.config.mongo_password,
                                                         url=self.config.mongo_url)
                     if not self.config.dry_run:
-                        migration_object.downgrade()
+                        await migration_object.downgrade()
                 except Exception as e:
                     print("Failed to downgrade version: %s" % self.migrations[migration_datetime])
                     print(e.__class__)
@@ -126,17 +127,17 @@ class MigrationManager(object):
                 if not self.config.dry_run:
                     self._remove_migration(migration_datetime)
 
-    def _get_migration_names(self):
+    async def _get_migration_names(self):
         return self.db[self.config.metastore].find().sort('migration_datetime', pymongo.DESCENDING)
 
-    def _create_migration(self, migration_datetime):
+    async def _create_migration(self, migration_datetime):
         self.db[self.config.metastore].insert_one({'migration_datetime': migration_datetime,
                                           'created_at': datetime.now()})
 
-    def _remove_migration(self, migration_datetime):
+    async def _remove_migration(self, migration_datetime):
         self.db[self.config.metastore].delete_one({'migration_datetime': migration_datetime})
 
-    def _get_mongo_database(self, host, port, database, user, password, url):
+    async def _get_mongo_database(self, host, port, database, user, password, url):
         if url and database and user is not None: #provide auth_database in url (mongodb://mongohostname:27017/auth_database)
             client = pymongo.MongoClient(url, username=user, password=password)
             return client.get_database(database)
@@ -151,13 +152,19 @@ class MigrationManager(object):
 
 
 def main():
+    asyncio.run(main_async())
+
+async def main_async():
     config = Configuration()
     config.from_console()
     manager = MigrationManager(config)
-    manager.run()
+    await manager.run()
 
 def create_migration():
+    asyncio.run(create_migration_async())
+
+async def create_migration_async():
     config = Configuration()
     config.from_console()
     manager = MigrationManager(config)
-    manager.create_migration()
+    await manager.create_migration()
