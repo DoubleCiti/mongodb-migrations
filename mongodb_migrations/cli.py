@@ -25,30 +25,33 @@ class MigrationManager(object):
         self.config = config
 
     async def run(self):
-        self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database,
-                                           self.config.mongo_username, self.config.mongo_password,
-                                           self.config.mongo_url)
-        files = os.listdir(self.config.mongo_migrations_path)
-        for file in files:
-            result = re.match('^(\d+)[_a-z]*\.py$', file)
-            if result:
-                self.migrations[result.group(1)] = file[:-3]
+        try:
+            self.db = self._get_mongo_database(self.config.mongo_host, self.config.mongo_port, self.config.mongo_database,
+                                            self.config.mongo_username, self.config.mongo_password,
+                                            self.config.mongo_url)
+            files = os.listdir(self.config.mongo_migrations_path)
+            for file in files:
+                result = re.match('^(\d+)[_a-z]*\.py$', file)
+                if result:
+                    self.migrations[result.group(1)] = file[:-3]
 
-        database_migrations = self._get_migration_names()
-        self.database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
-        if set(self.database_migration_names) - set(self.migrations.keys()):
-            print("migrations doesn't match")
-            sys.exit(1)
-        if self.database_migration_names:
-            print("Found previous migrations, last migration is version: %s" % self.database_migration_names[0])
-        else:
-            print("No previous migrations found")
+            database_migrations = self._get_migration_names()
+            self.database_migration_names = [migration['migration_datetime'] for migration in database_migrations]
+            if set(self.database_migration_names) - set(self.migrations.keys()):
+                print("migrations doesn't match")
+                sys.exit(1)
+            if self.database_migration_names:
+                print("Found previous migrations, last migration is version: %s" % self.database_migration_names[0])
+            else:
+                print("No previous migrations found")
 
-        sys.path.insert(0, self.config.mongo_migrations_path)
-        {
-            Execution.MIGRATE: self._do_migrate,
-            Execution.DOWNGRADE: self._do_rollback
-        }[self.config.execution](self.config.to_datetime)
+            sys.path.insert(0, self.config.mongo_migrations_path)
+            {
+                Execution.MIGRATE: self._do_migrate,
+                Execution.DOWNGRADE: self._do_rollback
+            }[self.config.execution](self.config.to_datetime)
+        finally:
+            self.db.close()
 
     async def create_migration(self):
         if not os.path.exists(self.config.mongo_migrations_path):
