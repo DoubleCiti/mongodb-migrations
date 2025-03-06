@@ -22,14 +22,14 @@ def get_read_me():
         return DESCRIPTION
 
 setup(
-    name='mongodb-migrations',
+    name='mongodb-migrations-async',
     version='1.3.1',
     description=DESCRIPTION,
     long_description=get_read_me(),
     long_description_content_type="text/markdown",
-    url='https://github.com/DoubleCiti/mongodb-migrations',
-    author='David Xie',
-    author_email='david30xie@gmail.com',
+    url='https://github.com/ai-wand/mongodb-migrations',
+    author='Wand AI',
+    author_email='dev-group@wand.ai',
     license='GPLv3',
     packages=find_packages(),
     platforms='any',

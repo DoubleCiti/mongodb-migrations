@@ -1,0 +1,13 @@
+{
+    // can't debug tests if coverage is enabled https://github.com/microsoft/vscode-python/issues/693
+    "python.testing.pytestArgs": ["--no-cov", "-n", "0", "--asyncio-mode=auto"],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "mise.configureExtensionsUseSymLinks": true,
+    "mise.updateOpenTerminalsEnvAutomatically": true,
+    "debug.javascript.defaultRuntimeExecutable": {
+        "pwa-node": "${workspaceFolder}/.vscode/mise-tools/node"
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/.vscode/mise-tools/python",
+    "debugpy.debugJustMyCode": false,
+}

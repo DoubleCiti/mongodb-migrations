@@ -63,3 +63,4 @@ target/
 
 # local config files
 config.ini
+venv
