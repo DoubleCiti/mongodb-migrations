@@ -1,4 +1,4 @@
-from mongodb_migrations.base import BaseMigration
+from mongodb_migrations_async.base import BaseMigration
 
 
 class Migration(BaseMigration):

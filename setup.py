@@ -27,7 +27,7 @@ setup(
     description=DESCRIPTION,
     long_description=get_read_me(),
     long_description_content_type="text/markdown",
-    url='https://github.com/ai-wand/mongodb-migrations',
+    url='https://github.com/ai-wand/mongodb-migrations-async',
     author='Wand AI',
     author_email='dev-group@wand.ai',
     license='GPLv3',
@@ -38,8 +38,8 @@ setup(
     install_requires=install_requires,
     entry_points={
         'console_scripts': [
-            'mongodb-migrate=mongodb_migrations.cli:main',
-            'mongodb-migrate-create=mongodb_migrations.cli:create_migration'
+            'mongodb-migrate-async=mongodb_migrations_async.cli:main',
+            'mongodb-migrate-create-async=mongodb_migrations_async.cli:create_migration'
         ],
     },
     classifiers=[

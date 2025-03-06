@@ -8,7 +8,7 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 * use `pip`
 
     ```bash
-    $ pip install mongodb-migrations
+    $ pip install mongodb-migrations-async
     ```
 
 * from source code
@@ -23,10 +23,10 @@ MongoDB is a great NoSQL and schema-less database, but if already have data in d
 2. create a python file with name in form of `TIMESTAMP_description.py` , i.e.`20160320145400_description.py`, otherwise migration file won't be found.
 3. in `20160320145400_description.py` create a class named `Migration` and extends `BaseMigration`
 4. implement `upgrade` method
-5. use cli `mongodb-migrate` to run migrations
+5. use cli `mongodb-migrate-async` to run migrations
 6. `metastore` is an optional parameter of collection name where it stores the previous migrations
 
-**Now there is an easier way to create a migration file, command `mongodb-migrate-create --description <description>` will create an empty migration file in `migrations` folder or the folder provided by `--migrations`.**
+**Now there is an easier way to create a migration file, command `mongodb-migrate-create-async --description <description>` will create an empty migration file in `migrations` folder or the folder provided by `--migrations`.**
 
 If you don't wish to use the CLI, you can override the MigrationManager -> create_config and then call MigrationManager -> run. Example execution:
 
@@ -34,7 +34,7 @@ If you don't wish to use the CLI, you can override the MigrationManager -> creat
     manager = MigrationManager()
     manager.config.config_file = "foobar.ini"
     manager.config._from_ini()
-    manager.run()
+    await manager.run()
 ```
 
 You can also use the same config to keep multiple keys, the manager allows you access by using:
@@ -81,12 +81,12 @@ metastore = database_migrations
 ### command line arguments example
 
 ```bash
-mongodb-migrate --host 127.0.0.1 --port 27017 --database test --migrations examples
+mongodb-migrate-async --host 127.0.0.1 --port 27017 --database test --migrations examples
 ```
 
 ### alternative command line example
 ```bash
-mongodb-migrate --url mongodb://127.0.0.1:27017/test --migrations examples
+mongodb-migrate-async --url mongodb://127.0.0.1:27017/test --migrations examples
 ```
 
 
@@ -95,19 +95,19 @@ mongodb-migrate --url mongodb://127.0.0.1:27017/test --migrations examples
 Migration files are located in `examples`, run following command to run migrations:
 
 ```
-$ MONGODB_MIGRATIONS_CONFIG=examples/config.ini mongodb-migrate
+$ MONGODB_MIGRATIONS_CONFIG=examples/config.ini mongodb-migrate-async
 ```
 
 For Downgrading the migrations, you need to pass a command line switch `--downgrade`
 
 To upgrade/downgrade only to a specific migration, use `--to_datetime`. This command will upgrade to the migration with prefix `20191115180633`:
 ```bash
-mongodb-migrate --url mongodb://127.0.0.1:27017/test --migrations examples --to_datetime 20191115180633
+mongodb-migrate-async --url mongodb://127.0.0.1:27017/test --migrations examples --to_datetime 20191115180633
 ```
 
 ## Getting involved
 
-* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/DoubleCiti/mongodb-migrations/issues)
+* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/ai-wand/mongodb-migrations/issues)
 
 ## Contributors
 
