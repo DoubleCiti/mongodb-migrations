@@ -66,7 +66,7 @@ class MigrationManager(object):
             datetime.now().strftime('%Y%m%d%H%M%S'),
             self.config.description)
         with open(filename, 'w') as f:
-            f.write("from mongodb_migrations.base import BaseMigration\n\n\n")
+            f.write("from mongodb_migrations_async.base import BaseMigration\n\n\n")
 
             f.write("class Migration(BaseMigration):\n")
 

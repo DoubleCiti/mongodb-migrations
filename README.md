@@ -1,4 +1,4 @@
-mongodb-migrations
+mongodb-migrations-async
 ------------------
 
 MongoDB is a great NoSQL and schema-less database, but if already have data in database and you changed data schema, you need a migration tool to update your existing data.
@@ -45,7 +45,7 @@ You can also use the same config to keep multiple keys, the manager allows you a
 
 ## Configuration
 
-`mongodb-migrations` will try to load `config.ini` first, if it's not found, default values will be used. If any command line argument is provided, it will override config from configuration file.
+`mongodb-migrations-async` will try to load `config.ini` first, if it's not found, default values will be used. If any command line argument is provided, it will override config from configuration file.
 
 **Database name or Url is mandatory**
 
@@ -107,7 +107,7 @@ mongodb-migrate-async --url mongodb://127.0.0.1:27017/test --migrations examples
 
 ## Getting involved
 
-* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/ai-wand/mongodb-migrations/issues)
+* if you find any bug or need anything, please log an issue here: [Issues](https://github.com/ai-wand/mongodb-migrations-async/issues)
 
 ## Contributors
 
